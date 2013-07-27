@@ -29,6 +29,10 @@ LOCAL_MODULE := recovery
 
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 
+ifeq ($(RECOVERY_FSTAB_VERSION),)
+RECOVERY_FSTAB_VERSION := 1
+endif
+
 ifdef I_AM_KOUSH
 RECOVERY_NAME := ClockworkMod Recovery
 LOCAL_CFLAGS += -DI_AM_KOUSH
@@ -97,7 +101,7 @@ ifeq ($(BOARD_USES_BML_OVER_MTD),true)
 LOCAL_STATIC_LIBRARIES += libbml_over_mtd
 endif
 
-LOCAL_STATIC_LIBRARIES += libminui libpixelflinger_static libpng libcutils
+LOCAL_STATIC_LIBRARIES += libminui libpixelflinger_static libpng libcutils liblog
 LOCAL_STATIC_LIBRARIES += libstdc++ libc
 
 LOCAL_STATIC_LIBRARIES += libselinux
