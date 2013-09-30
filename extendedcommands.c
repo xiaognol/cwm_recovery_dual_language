@@ -1163,8 +1163,11 @@ int show_nandroid_menu()
                         // /emmc/clockworkmod/backup/%F.%H.%M.%S (time values are populated too)
                         sprintf(backup_path, "%s/%s", chosen_path, path_fmt);
                     }
-                    nandroid_backup(backup_path);
-                    write_recovery_version();
+                    ui_print("Backup to:%s\n", backup_path); 
+                    if (confirm_selection("Confirm backup?", "Yes - Restore")) {
+                        nandroid_backup(backup_path);
+                        write_recovery_version();
+                    }
                 }
                 break;
             case 1:
