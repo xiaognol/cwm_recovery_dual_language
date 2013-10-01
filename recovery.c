@@ -897,7 +897,7 @@ main(int argc, char **argv) {
     device_ui_init(&ui_parameters);
     ui_init();
     ui_print(EXPAND(RECOVERY_VERSION)"\n");
-    ui_print("Compiled by Ryuinferno ("EXPAND(RECOVERY_BUILD_DATE)")\n"); 
+    ui_print("Compiled by "EXPAND(RECOVERY_BUILDER)" on "EXPAND(RECOVERY_BUILD_DATE)"\n"); 
     load_volume_table();
     process_volumes();
     vold_client_start(&v_callbacks, 0);
