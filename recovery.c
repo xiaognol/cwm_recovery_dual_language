@@ -468,9 +468,10 @@ get_menu_selection(const char** headers, char** items, int menu_only,
     
     int item_count = ui_start_menu(headers, items, initial_selection);
     int selected = initial_selection;
-    int chosen_item = -1;
+    int chosen_item = -1; // NO_ACTION
+    int wrap_count = 0;
 
-    while (chosen_item < 0 && chosen_item != GO_BACK && chosen_item != REFRESH) {
+    while (chosen_item < 0 && chosen_item != GO_BACK) {
         int key = ui_wait_key();
         int visible = ui_text_visible();
 
@@ -483,10 +484,10 @@ get_menu_selection(const char** headers, char** items, int menu_only,
                 return ITEM_REBOOT;
             }
         }
-        else if (key == -2) {
+        else if (key == -2) {   // we are returning from ui_cancel_wait_key(): trigger a GO_BACK
             return GO_BACK;
         }
-        else if (key == -6) {
+        else if (key == -3) {   // an USB device was plugged in (returning from ui_wait_key())
             return REFRESH;
         }
 
@@ -518,12 +519,24 @@ get_menu_selection(const char** headers, char** items, int menu_only,
                 case GO_BACK:
                     chosen_item = GO_BACK;
                     break;
-                case REFRESH:
-                    chosen_item = REFRESH;
-                    break;
             }
         } else if (!menu_only) {
             chosen_item = action;
+        }
+
+        if (abs(selected - old_selected) > 1) {
+            wrap_count++;
+            if (wrap_count == 5) {
+                wrap_count = 0;
+                if (ui_get_rainbow_mode()) {
+                    ui_set_rainbow_mode(0);
+                    ui_print("Rainbow mode disabled\n");
+                }
+                else {
+                    ui_set_rainbow_mode(1);
+                    ui_print("Rainbow mode enabled!\n");
+                }
+            }
         }
     }
 
@@ -681,12 +694,12 @@ wipe_data(int confirm) {
 }
 
 static void headless_wait() {
-  ui_show_text(0);
-  const char** headers = prepend_title((const char**)MENU_HEADERS);
-  for (;;) {
-    finish_recovery(NULL);
-    get_menu_selection(headers, MENU_ITEMS, 0, 0);
-  }
+    ui_show_text(0);
+    const char** headers = prepend_title((const char**)MENU_HEADERS);
+    for(;;) {
+        finish_recovery(NULL);
+        get_menu_selection(headers, MENU_ITEMS, 0, 0);
+    }
 }
 
 int ui_menu_level = 1;
@@ -892,7 +905,7 @@ main(int argc, char **argv) {
     // If these fail, there's not really anywhere to complain...
     freopen(TEMPORARY_LOG_FILE, "a", stdout); setbuf(stdout, NULL);
     freopen(TEMPORARY_LOG_FILE, "a", stderr); setbuf(stderr, NULL);
-    printf("Starting recovery on %s", ctime(&start));
+    printf("Starting recovery on %s\n", ctime(&start));
 
     device_ui_init(&ui_parameters);
     ui_init();
@@ -999,7 +1012,7 @@ main(int argc, char **argv) {
     } else if (sideload) {
         signature_check_enabled = 0;
         if (!headless)
-          ui_set_show_text(1);
+            ui_set_show_text(1);
         if (0 == apply_from_adb()) {
             status = INSTALL_SUCCESS;
             ui_set_show_text(0);
@@ -1013,10 +1026,10 @@ main(int argc, char **argv) {
         script_assert_enabled = 0;
         is_user_initiated_recovery = 1;
         if (!headless) {
-          ui_set_show_text(1);
-          ui_set_background(BACKGROUND_ICON_CLOCKWORK);
+            ui_set_show_text(1);
+            ui_set_background(BACKGROUND_ICON_CLOCKWORK);
         }
-        
+
         if (extendedcommand_file_exists()) {
             LOGI("Running extendedcommand...\n");
             int ret;
@@ -1033,7 +1046,7 @@ main(int argc, char **argv) {
     }
 
     if (headless) {
-      headless_wait();
+        headless_wait();
     }
     if (status != INSTALL_SUCCESS && !is_user_initiated_recovery) {
         ui_set_show_text(1);
