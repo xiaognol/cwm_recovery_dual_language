@@ -42,7 +42,7 @@ RECOVERY_NAME := CWM-based Recovery
 endif
 endif
 
-RECOVERY_VERSION := $(RECOVERY_NAME) v6.0.4.0
+RECOVERY_VERSION := $(RECOVERY_NAME) v6.0.4.3
 RECOVERY_BUILD_DATE := $(shell date +"%Y%m%d")
 RECOVERY_BUILDER := $(shell whoami)
 
