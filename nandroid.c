@@ -416,7 +416,7 @@ int nandroid_backup(const char* backup_path)
 
     if (0 != (ret = nandroid_backup_partition(backup_path, "/system")))
         return ret;
-    
+
     if (0 != (ret = nandroid_backup_partition(backup_path, "/preload")))
         return ret;
 

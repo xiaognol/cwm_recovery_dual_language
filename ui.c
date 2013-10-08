@@ -251,8 +251,8 @@ static void draw_text_line(int row, const char* t, int align) {
                 col = gr_fb_width() - length - 1;
                 break;
         }
-     if (ui_get_rainbow_mode()) ui_rainbow_mode();
-     gr_text(col, (row+1)*CHAR_HEIGHT-1, t);
+        if (ui_get_rainbow_mode()) ui_rainbow_mode();
+        gr_text(col, (row+1)*CHAR_HEIGHT-1, t);
     }
 }
 

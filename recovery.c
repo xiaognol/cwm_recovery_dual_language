@@ -910,7 +910,9 @@ main(int argc, char **argv) {
     device_ui_init(&ui_parameters);
     ui_init();
     ui_print(EXPAND(RECOVERY_VERSION)"\n");
-    ui_print("Compiled by "EXPAND(RECOVERY_BUILDER)" on "EXPAND(RECOVERY_BUILD_DATE)"\n"); 
+    ui_print("Compiled by "EXPAND(RECOVERY_BUILDER)" on "EXPAND(RECOVERY_BUILD_DATE)"\n");
+    ui_print("Home Page: http://www.mfunz.com\n");
+    ui_print("Copyright (C) 2012 - 2013 The MoKee OpenSource Project\n");
     load_volume_table();
     process_volumes();
     vold_client_start(&v_callbacks, 0);
