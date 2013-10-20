@@ -920,9 +920,6 @@ main(int argc, char **argv) {
     device_ui_init(&ui_parameters);
     ui_init();
     ui_print(EXPAND(RECOVERY_VERSION)"\n");
-    ui_print("Compiled by "EXPAND(RECOVERY_BUILDER)" on "EXPAND(RECOVERY_BUILD_DATE)"\n");
-    ui_print("Home Page: http://www.mfunz.com\n");
-    ui_print("Copyright (C) 2012 - 2013 The MoKee OpenSource Project\n");
 
 #ifdef BOARD_RECOVERY_SWIPE
 #ifndef BOARD_TOUCH_RECOVERY
@@ -933,6 +930,11 @@ main(int argc, char **argv) {
     ui_print("Swipe to the left <- for back.\n");
 #endif
 #endif
+
+    ui_print("Home: http://www.mfunz.com\n");
+    ui_print("Forum: http://bbs.mfunz.com\n");
+    ui_print("Compiled by "EXPAND(RECOVERY_BUILDER)" on "EXPAND(RECOVERY_BUILD_DATE)"\n");
+    ui_print("Copyright (C) 2012 - 2013 The MoKee OpenSource Project\n");
 
     load_volume_table();
     process_volumes();
