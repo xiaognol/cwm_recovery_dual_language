@@ -927,9 +927,10 @@ main(int argc, char **argv) {
 #ifdef BOARD_RECOVERY_SWIPE
 #ifndef BOARD_TOUCH_RECOVERY
     //display directions for swipe controls
+    ui_print("You can use gestures in this recovery.\n");
     ui_print("Swipe up/down to change selections.\n");
-    ui_print("Swipe to the right for enter.\n");
-    ui_print("Swipe to the left for back.\n");
+    ui_print("Swipe to the right -> for enter.\n");
+    ui_print("Swipe to the left <- for back.\n");
 #endif
 #endif
 
