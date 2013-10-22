@@ -1,3 +1,5 @@
+ifneq ($(WITH_SIMPLE_RECOVERY),true)
+
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -207,3 +209,5 @@ include $(commands_recovery_local_path)/utilities/Android.mk
 include $(commands_recovery_local_path)/su/Android.mk
 include $(commands_recovery_local_path)/voldclient/Android.mk
 commands_recovery_local_path :=
+
+endif
