@@ -932,8 +932,10 @@ int show_partition_menu()
 
             if (is_path_mounted(e->path))
             {
+                ignore_data_media_workaround(1);
                 if (0 != ensure_path_unmounted(e->path))
                     ui_print("Error unmounting %s!\n", e->path);
+                ignore_data_media_workaround(0);
             }
             else
             {
@@ -1711,8 +1713,6 @@ int volume_main(int argc, char **argv) {
 }
 
 int verify_root_and_recovery() {
-    write_recovery_version();
-
     if (ensure_path_mounted("/system") != 0)
         return 0;
 
