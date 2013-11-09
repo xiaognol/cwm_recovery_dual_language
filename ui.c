@@ -256,7 +256,7 @@ static void draw_text_line(int row, const char* t, int align) {
                 break;
         }
         if (ui_get_rainbow_mode()) ui_rainbow_mode();
-        gr_text(0, (row+1)*CHAR_HEIGHT-1, t, 0);
+        gr_text(col, (row+1)*CHAR_HEIGHT-1, t, 0);
     }
 }
 
