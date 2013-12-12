@@ -1019,7 +1019,7 @@ main(int argc, char **argv) {
     ui_print("Home: http://www.mfunz.com\n");
     ui_print("Forum: http://bbs.mfunz.com\n");
     ui_print("Compiled by "EXPAND(RECOVERY_BUILDER)" on "EXPAND(RECOVERY_BUILD_DATE)"\n");
-    ui_print("Copyright (C) 2012 - 2013 The MoKee OpenSource Project\n");
+    ui_print("Copyright (C) 2012 - 2014 The MoKee OpenSource Project\n");
 
     load_volume_table();
     process_volumes();
