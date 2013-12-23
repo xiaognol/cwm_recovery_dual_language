@@ -615,20 +615,21 @@ extern void reset_ext4fs_info();
 
 extern struct selabel_handle *sehandle;
 int format_device(const char *device, const char *path, const char *fs_type) {
-    Volume* v = volume_for_path(path);
-    if (v == NULL) {
-        // silent failure for sd-ext
-        if (strcmp(path, "/sd-ext") == 0)
-            return -1;
-        LOGE("unknown volume \"%s\"\n", path);
-        return -1;
-    }
     if (is_data_media_volume_path(path)) {
         return format_unknown_device(NULL, path, NULL);
     }
     if (strstr(path, "/data") == path && is_data_media()) {
         return format_unknown_device(NULL, path, NULL);
     }
+
+    Volume* v = volume_for_path(path);
+    if (v == NULL) {
+        // silent failure for sd-ext
+        if (strcmp(path, "/sd-ext") != 0)
+            LOGE("unknown volume '%s'\n", path);
+        return -1;
+    }
+
     if (strcmp(fs_type, "ramdisk") == 0) {
         // you can't format the ramdisk.
         LOGE("can't format_volume \"%s\"", path);
@@ -1243,10 +1244,10 @@ void format_sdcard(const char* volume) {
     if (is_data_media_volume_path(volume))
         return;
 
-    Volume *vol = volume_for_path(volume);
-    if (vol == NULL || strcmp(vol->fs_type, "auto") != 0)
+    Volume *v = volume_for_path(volume);
+    if (v == NULL || strcmp(v->fs_type, "auto") != 0)
         return;
-    if (!fs_mgr_is_voldmanaged(vol) && !can_partition(volume))
+    if (!fs_mgr_is_voldmanaged(v) && !can_partition(volume))
         return;
 
     char* headers[] = {"Format device:", volume, "", NULL };
@@ -1269,7 +1270,6 @@ void format_sdcard(const char* volume) {
     if (!confirm_selection( "Confirm formatting?", "Yes - Format device"))
         return;
 
-    Volume *v = volume_for_path(volume);
     if (ensure_path_unmounted(v->mount_point) != 0)
         return;
 
