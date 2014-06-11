@@ -61,10 +61,18 @@ static int vold_connect() {
     if ((sock = socket_local_client("vold",
                                      ANDROID_SOCKET_NAMESPACE_RESERVED,
                                      SOCK_STREAM)) < 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("Error connecting to Vold! (%s)\n", strerror(errno));
+#else
+        LOGE("连接到 Vold 时出错！(%s)\n", strerror(errno));
+#endif
         ret = -1;
     } else {
+#ifndef USE_CHINESE_FONT
         LOGI("Connected to Vold..\n");
+#else
+        LOGI("已连接到 Vold..\n");
+#endif
     }
     return ret;
 }
@@ -144,9 +152,17 @@ static int monitor() {
             memset(buffer, 0, 4096);
             if ((rc = read(sock, buffer, 4096)) <= 0) {
                 if (rc == 0)
+#ifndef USE_CHINESE_FONT
                     LOGE("Lost connection to Vold - did it crash?\n");
+#else
+                    LOGE("断开了与 Vold 的连接 - 它是否已崩溃？\n");
+#endif
                 else
+#ifndef USE_CHINESE_FONT
                     LOGE("Error reading data (%s)\n", strerror(errno));
+#else
+                    LOGE("读取数据出错 (%s)\n", strerror(errno));
+#endif
                 if (rc == 0)
                     return ECONNRESET;
                 goto out;
@@ -247,7 +263,11 @@ int vold_command(int len, const char** command, int wait) {
         sz = strlcat(final_cmd, cmp, sizeof(final_cmd));
 
         if (sz >= sizeof(final_cmd)) {
+#ifndef USE_CHINESE_FONT
             LOGE("command syntax error  sz=%d size=%d", sz, sizeof(final_cmd));
+#else
+            LOGE("命令语法错误  sz=%d size=%d", sz, sizeof(final_cmd));
+#endif
             free(cmp);
             return -1;
         }
@@ -257,7 +277,11 @@ int vold_command(int len, const char** command, int wait) {
     // only one writer at a time
     pthread_mutex_lock(&mutex);
     if (write(sock, final_cmd, strlen(final_cmd) + 1) < 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("Unable to send command to vold!\n");
+#else
+        LOGE("无法发送命令到 vold！\n");
+#endif
         ret = -1;
     }
     cmd_inflight++;

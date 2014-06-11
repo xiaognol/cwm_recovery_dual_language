@@ -20,18 +20,30 @@ int loki_find(const char* aboot_image)
 
 	aboot_fd = open(aboot_image, O_RDONLY);
 	if (aboot_fd < 0) {
+#ifndef USE_CHINESE_FONT
 		printf("[-] Failed to open %s for reading.\n", aboot_image);
+#else
+		printf("[-] 无法打开 %s 以进行读取。\n", aboot_image);
+#endif
 		return 1;
 	}
 
 	if (fstat(aboot_fd, &st)) {
+#ifndef USE_CHINESE_FONT
 		printf("[-] fstat() failed.\n");
+#else
+		printf("[-] fstat() 失败。\n");
+#endif
 		return 1;
 	}
 
 	aboot = mmap(0, (st.st_size + 0xfff) & ~0xfff, PROT_READ, MAP_PRIVATE, aboot_fd, 0);
 	if (aboot == MAP_FAILED) {
+#ifndef USE_CHINESE_FONT
 		printf("[-] Failed to mmap aboot.\n");
+#else
+		printf("[-] 无法 mmap aboot。\n");
+#endif
 		return 1;
 	}
 
@@ -73,11 +85,19 @@ int loki_find(const char* aboot_image)
 	}
 
 	if (!check_sigs) {
+#ifndef USE_CHINESE_FONT
 		printf("[-] Could not find signature checking function.\n");
+#else
+		printf("[-] 无法找到签名检查函数。\n");
+#endif
 		return 1;
 	}
 
+#ifndef USE_CHINESE_FONT
 	printf("[+] Signature check function: %.08lx\n", check_sigs);
+#else
+	printf("[+] 签名检查函数：%.08lx\n", check_sigs);
+#endif
 
 	boot_mmc = 0;
 
@@ -94,7 +114,11 @@ int loki_find(const char* aboot_image)
     }
 
 	if (!boot_mmc) {
+#ifndef USE_CHINESE_FONT
 		printf("[-] Could not find boot_linux_from_mmc.\n");
+#else
+		printf("[-] 无法找到 boot_linux_from_mmc.\n");
+#endif
 		return 1;
 	}
 

@@ -46,8 +46,8 @@ static int gShowBackButton = 0;
 #define MAX_COLS 96
 #define MAX_ROWS 32
 
-#define MENU_MAX_COLS 76
-#define MENU_MAX_ROWS 275
+#define MENU_MAX_COLS 64
+#define MENU_MAX_ROWS 250
 
 #define MIN_LOG_ROWS 3
 
@@ -85,7 +85,7 @@ static int boardRepeatableKeys[64], boardNumRepeatableKeys = 0;
 static const struct { gr_surface* surface; const char *name; } BITMAPS[] = {
     { &gBackgroundIcon[BACKGROUND_ICON_INSTALLING], "icon_installing" },
     { &gBackgroundIcon[BACKGROUND_ICON_ERROR],      "icon_error" },
-    { &gBackgroundIcon[BACKGROUND_ICON_CLOCKWORK],  "icon_clockwork" },
+    { &gBackgroundIcon[BACKGROUND_ICON_ATX_ANZHI],  "icon_atx_anzhi" },
     { &gBackgroundIcon[BACKGROUND_ICON_CID],  "icon_cid" },
     { &gBackgroundIcon[BACKGROUND_ICON_FIRMWARE_INSTALLING], "icon_firmware_install" },
     { &gBackgroundIcon[BACKGROUND_ICON_FIRMWARE_ERROR], "icon_firmware_error" },
@@ -548,7 +548,11 @@ void ui_init(void)
     for (i = 0; BITMAPS[i].name != NULL; ++i) {
         int result = res_create_surface(BITMAPS[i].name, BITMAPS[i].surface);
         if (result < 0) {
+#ifndef USE_CHINESE_FONT
             LOGE("Missing bitmap %s\n(Code %d)\n", BITMAPS[i].name, result);
+#else
+            LOGE("缺少位图 %s\n(错误代码 %d)\n", BITMAPS[i].name, result);
+#endif
         }
     }
 
@@ -560,7 +564,11 @@ void ui_init(void)
         sprintf(filename, "indeterminate%02d", i+1);
         int result = res_create_surface(filename, gProgressBarIndeterminate+i);
         if (result < 0) {
+#ifndef USE_CHINESE_FONT
             LOGE("Missing bitmap %s\n(Code %d)\n", filename, result);
+#else
+            LOGE("缺少位图 %s\n(错误代码 %d)\n", filename, result);
+#endif
         }
     }
 
@@ -574,7 +582,11 @@ void ui_init(void)
             sprintf(filename, "icon_installing_overlay%02d", i+1);
             int result = res_create_surface(filename, gInstallationOverlay+i);
             if (result < 0) {
+#ifndef USE_CHINESE_FONT
                 LOGE("Missing bitmap %s\n(Code %d)\n", filename, result);
+#else
+                LOGE("缺少位图 %s\n(错误代码 %d)\n", filename, result);
+#endif
             }
         }
 
@@ -626,7 +638,11 @@ char *ui_copy_image(int icon, int *width, int *height, int *bpp) {
     int size = *width * *height * sizeof(gr_pixel);
     char *ret = malloc(size);
     if (ret == NULL) {
+#ifndef USE_CHINESE_FONT
         LOGE("Can't allocate %d bytes for image\n", size);
+#else
+        LOGE("无法为镜像分配 %d 字节的空间\n", size);
+#endif
     } else {
         memcpy(ret, gr_fb_data(), size);
     }
@@ -746,8 +762,19 @@ void ui_print(const char *fmt, ...)
     gettimeofday(&lastupdate, NULL);
     if (text_rows > 0 && text_cols > 0) {
         char *ptr;
+#ifdef USE_CHINESE_FONT
+        int fwidth = 0, fwidth_sum = 0;
+#endif
         for (ptr = buf; *ptr != '\0'; ++ptr) {
+#ifdef USE_CHINESE_FONT
+        fwidth = gr_measure(&*ptr);
+        fwidth_sum += fwidth;
+
+        if (*ptr == '\n' || fwidth_sum >= gr_fb_width()) {
+            fwidth_sum = 0;
+#else
             if (*ptr == '\n' || text_col >= text_cols) {
+#endif
                 text[text_row][text_col] = '\0';
                 text_col = 0;
                 text_row = (text_row + 1) % text_rows;
@@ -805,7 +832,11 @@ int ui_start_menu(const char** headers, char** items, int initial_selection) {
         }
 
         if (gShowBackButton && !ui_root_menu) {
+#ifndef USE_CHINESE_FONT
             strcpy(menu[i], " - +++++Go Back+++++");
+#else
+            strcpy(menu[i], " - +++++ 返回上一级 +++++");
+#endif
             ++i;
         }
 
@@ -887,7 +918,11 @@ void ui_show_text(int visible)
 static int usb_connected() {
     int fd = open("/sys/class/android_usb/android0/state", O_RDONLY);
     if (fd < 0) {
+#ifndef USE_CHINESE_FONT
         printf("failed to open /sys/class/android_usb/android0/state: %s\n",
+#else
+        printf("打开 /sys/class/android_usb/android0/state 失败: %s\n",
+#endif
                strerror(errno));
         return 0;
     }
@@ -896,7 +931,11 @@ static int usb_connected() {
     /* USB is connected if android_usb state is CONNECTED or CONFIGURED */
     int connected = (read(fd, &buf, 1) == 1) && (buf == 'C');
     if (close(fd) < 0) {
+#ifndef USE_CHINESE_FONT
         printf("failed to close /sys/class/android_usb/android0/state: %s\n",
+#else
+        printf("关闭 /sys/class/android_usb/android0/state 失败: %s\n",
+#endif
                strerror(errno));
     }
     return connected;

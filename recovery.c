@@ -145,7 +145,11 @@ static const int MAX_ARGS = 100;
 FILE*
 fopen_path(const char *path, const char *mode) {
     if (ensure_path_mounted(path) != 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("Can't mount %s\n", path);
+#else
+        LOGE("无法挂载 %s\n", path);
+#endif
         return NULL;
     }
 
@@ -154,7 +158,11 @@ fopen_path(const char *path, const char *mode) {
     if (strchr("wa", mode[0])) dirCreateHierarchy(path, 0777, NULL, 1, sehandle);
 
     FILE *fp = fopen(path, mode);
+#ifndef USE_CHINESE_FONT
     if (fp == NULL && path != COMMAND_FILE) LOGE("Can't open %s\n", path);
+#else
+    if (fp == NULL && path != COMMAND_FILE) LOGE("无法打开 %s\n", path);
+#endif
     return fp;
 }
 
@@ -162,7 +170,11 @@ fopen_path(const char *path, const char *mode) {
 static void
 check_and_fclose(FILE *fp, const char *name) {
     fflush(fp);
+#ifndef USE_CHINESE_FONT
     if (ferror(fp)) LOGE("Error in %s\n(%s)\n", name, strerror(errno));
+#else
+    if (ferror(fp)) LOGE("%s 中出错\n(%s)\n", name, strerror(errno));
+#endif
     fclose(fp);
 }
 
@@ -174,14 +186,24 @@ static void
 get_args(int *argc, char ***argv) {
     struct bootloader_message boot;
     memset(&boot, 0, sizeof(boot));
-    get_bootloader_message(&boot);  // this may fail, leaving a zeroed structure
+    if (device_flash_type() == MTD || device_flash_type() == MMC) {
+        get_bootloader_message(&boot);  // this may fail, leaving a zeroed structure
+    }
 
     if (boot.command[0] != 0 && boot.command[0] != 255) {
+#ifndef USE_CHINESE_FONT
         LOGI("Boot command: %.*s\n", sizeof(boot.command), boot.command);
+#else
+        LOGI("启动命令: %.*s\n", sizeof(boot.command), boot.command);
+#endif
     }
 
     if (boot.status[0] != 0 && boot.status[0] != 255) {
+#ifndef USE_CHINESE_FONT
         LOGI("Boot status: %.*s\n", sizeof(boot.status), boot.status);
+#else
+        LOGI("启动状态: %.*s\n", sizeof(boot.status), boot.status);
+#endif
     }
 
     struct stat file_info;
@@ -197,9 +219,17 @@ get_args(int *argc, char ***argv) {
                 if ((arg = strtok(NULL, "\n")) == NULL) break;
                 (*argv)[*argc] = strdup(arg);
             }
+#ifndef USE_CHINESE_FONT
             LOGI("Got arguments from boot message\n");
+#else
+            LOGI("从启动信息中获取参数\n");
+#endif
         } else if (boot.recovery[0] != 0 && boot.recovery[0] != 255) {
+#ifndef USE_CHINESE_FONT
             LOGE("Bad boot message\n\"%.20s\"\n", boot.recovery);
+#else
+            LOGE("损坏的启动信息\n\"%.20s\"\n", boot.recovery);
+#endif
         }
     }
 
@@ -224,7 +254,11 @@ get_args(int *argc, char ***argv) {
             }
 
             check_and_fclose(fp, COMMAND_FILE);
+#ifndef USE_CHINESE_FONT
             LOGI("Got arguments from %s\n", COMMAND_FILE);
+#else
+            LOGI("从 %s 获取参数\n", COMMAND_FILE);
+#endif
         }
     }
 
@@ -256,7 +290,11 @@ static void
 copy_log_file(const char* source, const char* destination, int append) {
     FILE *log = fopen_path(destination, append ? "a" : "w");
     if (log == NULL) {
+#ifndef USE_CHINESE_FONT
         LOGE("Can't open %s\n", destination);
+#else
+        LOGE("无法打开 %s\n", destination);
+#endif
     } else {
         FILE *tmplog = fopen(source, "r");
         if (tmplog != NULL) {
@@ -313,7 +351,11 @@ finish_recovery(const char *send_intent) {
     if (send_intent != NULL) {
         FILE *fp = fopen_path(INTENT_FILE, "w");
         if (fp == NULL) {
+#ifndef USE_CHINESE_FONT
             LOGE("Can't open %s\n", INTENT_FILE);
+#else
+            LOGE("无法打开 %s\n", INTENT_FILE);
+#endif
         } else {
             fputs(send_intent, fp);
             check_and_fclose(fp, INTENT_FILE);
@@ -330,7 +372,11 @@ finish_recovery(const char *send_intent) {
     // Remove the command file, so recovery won't repeat indefinitely.
     if (ensure_path_mounted(COMMAND_FILE) != 0 ||
         (unlink(COMMAND_FILE) && errno != ENOENT)) {
+#ifndef USE_CHINESE_FONT
         LOGW("Can't unlink %s\n", COMMAND_FILE);
+#else
+        LOGW("无法解除软链 %s\n", COMMAND_FILE);
+#endif
     }
 
     sync();  // For good measure.
@@ -396,7 +442,11 @@ erase_volume(const char *volume) {
         }
     }
 
+#ifndef USE_CHINESE_FONT
     ui_print("Formatting %s...\n", volume);
+#else
+    ui_print("正在格式化 %s...\n", volume);
+#endif
 
     ensure_path_unmounted(volume);
     int result = format_volume(volume);
@@ -430,18 +480,30 @@ erase_volume(const char *volume) {
 static char*
 copy_sideloaded_package(const char* original_path) {
   if (ensure_path_mounted(original_path) != 0) {
+#ifndef USE_CHINESE_FONT
     LOGE("Can't mount %s\n", original_path);
+#else
+    LOGE("无法挂载 %s\n", original_path);
+#endif
     return NULL;
   }
 
   if (ensure_path_mounted(SIDELOAD_TEMP_DIR) != 0) {
+#ifndef USE_CHINESE_FONT
     LOGE("Can't mount %s\n", SIDELOAD_TEMP_DIR);
+#else
+    LOGE("无法挂载 %s\n", SIDELOAD_TEMP_DIR);
+#endif
     return NULL;
   }
 
   if (mkdir(SIDELOAD_TEMP_DIR, 0700) != 0) {
     if (errno != EEXIST) {
+#ifndef USE_CHINESE_FONT
       LOGE("Can't mkdir %s (%s)\n", SIDELOAD_TEMP_DIR, strerror(errno));
+#else
+      LOGE("无法创建文件夹 %s (%s)\n", SIDELOAD_TEMP_DIR, strerror(errno));
+#endif
       return NULL;
     }
   }
@@ -450,19 +512,35 @@ copy_sideloaded_package(const char* original_path) {
   // directory, owned by root, readable and writable only by root.
   struct stat st;
   if (stat(SIDELOAD_TEMP_DIR, &st) != 0) {
+#ifndef USE_CHINESE_FONT
     LOGE("failed to stat %s (%s)\n", SIDELOAD_TEMP_DIR, strerror(errno));
+#else
+    LOGE("无法统计 %s (%s)\n", SIDELOAD_TEMP_DIR, strerror(errno));
+#endif
     return NULL;
   }
   if (!S_ISDIR(st.st_mode)) {
+#ifndef USE_CHINESE_FONT
     LOGE("%s isn't a directory\n", SIDELOAD_TEMP_DIR);
+#else
+    LOGE("%s 不是一个文件夹\n", SIDELOAD_TEMP_DIR);
+#endif
     return NULL;
   }
   if ((st.st_mode & 0777) != 0700) {
+#ifndef USE_CHINESE_FONT
     LOGE("%s has perms %o\n", SIDELOAD_TEMP_DIR, st.st_mode);
+#else
+    LOGE("%s 的权限为 %o\n", SIDELOAD_TEMP_DIR, st.st_mode);
+#endif
     return NULL;
   }
   if (st.st_uid != 0) {
+#ifndef USE_CHINESE_FONT
     LOGE("%s owned by %lu; not root\n", SIDELOAD_TEMP_DIR, st.st_uid);
+#else
+    LOGE("%s 所有者为 %lu; 并非 root\n", SIDELOAD_TEMP_DIR, st.st_uid);
+#endif
     return NULL;
   }
 
@@ -472,25 +550,41 @@ copy_sideloaded_package(const char* original_path) {
 
   char* buffer = malloc(BUFSIZ);
   if (buffer == NULL) {
+#ifndef USE_CHINESE_FONT
     LOGE("Failed to allocate buffer\n");
+#else
+    LOGE("无法分配缓冲空间\n");
+#endif
     return NULL;
   }
 
   size_t read;
   FILE* fin = fopen(original_path, "rb");
   if (fin == NULL) {
+#ifndef USE_CHINESE_FONT
     LOGE("Failed to open %s (%s)\n", original_path, strerror(errno));
+#else
+    LOGE("无法打开 %s (%s)\n", original_path, strerror(errno));
+#endif
     return NULL;
   }
   FILE* fout = fopen(copy_path, "wb");
   if (fout == NULL) {
+#ifndef USE_CHINESE_FONT
     LOGE("Failed to open %s (%s)\n", copy_path, strerror(errno));
+#else
+    LOGE("无法打开 %s (%s)\n", copy_path, strerror(errno));
+#endif
     return NULL;
   }
 
   while ((read = fread(buffer, 1, BUFSIZ, fin)) > 0) {
     if (fwrite(buffer, 1, read, fout) != read) {
+#ifndef USE_CHINESE_FONT
       LOGE("Short write of %s (%s)\n", copy_path, strerror(errno));
+#else
+      LOGE("写入的数据不足 %s (%s)\n", copy_path, strerror(errno));
+#endif
       return NULL;
     }
   }
@@ -498,19 +592,31 @@ copy_sideloaded_package(const char* original_path) {
   free(buffer);
 
   if (fclose(fout) != 0) {
+#ifndef USE_CHINESE_FONT
     LOGE("Failed to close %s (%s)\n", copy_path, strerror(errno));
+#else
+    LOGE("无法关闭 %s (%s)\n", copy_path, strerror(errno));
+#endif
     return NULL;
   }
 
   if (fclose(fin) != 0) {
+#ifndef USE_CHINESE_FONT
     LOGE("Failed to close %s (%s)\n", original_path, strerror(errno));
+#else
+    LOGE("无法关闭 %s (%s)\n", original_path, strerror(errno));
+#endif
     return NULL;
   }
 
   // "adb push" is happy to overwrite read-only files when it's
   // running as root, but we'll try anyway.
   if (chmod(copy_path, 0400) != 0) {
+#ifndef USE_CHINESE_FONT
     LOGE("Failed to chmod %s (%s)\n", copy_path, strerror(errno));
+#else
+    LOGE("无法设置权限 %s (%s)\n", copy_path, strerror(errno));
+#endif
     return NULL;
   }
 
@@ -520,6 +626,11 @@ copy_sideloaded_package(const char* original_path) {
 static const char**
 prepend_title(const char** headers) {
     const char* title[] = { EXPAND(RECOVERY_VERSION),
+#ifndef USE_CHINESE_FONT
+                      "Only for "EXPAND(RECOVERY_PRODUCT_MODEL),
+#else
+                      EXPAND(RECOVERY_PRODUCT_MODEL)" 专用版",
+#endif
                       "",
                       NULL };
 
@@ -559,7 +670,11 @@ get_menu_selection(const char** headers, char** items, int menu_only,
             if (ui_text_ever_visible()) {
                 continue;
             } else {
+#ifndef USE_CHINESE_FONT
                 LOGI("timed out waiting for key input; rebooting.\n");
+#else
+                LOGI("等待按键输入超时；正在重启。\n");
+#endif
                 ui_end_menu();
                 return ITEM_REBOOT;
             }
@@ -610,11 +725,19 @@ get_menu_selection(const char** headers, char** items, int menu_only,
                 wrap_count = 0;
                 if (ui_get_rainbow_mode()) {
                     ui_set_rainbow_mode(0);
+#ifndef USE_CHINESE_FONT
                     ui_print("Rainbow mode disabled\n");
+#else
+                    ui_print("已禁用彩虹模式\n");
+#endif
                 }
                 else {
                     ui_set_rainbow_mode(1);
+#ifndef USE_CHINESE_FONT
                     ui_print("Rainbow mode enabled!\n");
+#else
+                    ui_print("已启用彩虹模式！\n");
+#endif
                 }
             }
         }
@@ -633,7 +756,11 @@ static int
 update_directory(const char* path, const char* unmount_when_done) {
     ensure_path_mounted(path);
 
+#ifndef USE_CHINESE_FONT
     const char* MENU_HEADERS[] = { "Choose a package to install:",
+#else
+    const char* MENU_HEADERS[] = { "选择要刷入的刷机包:",
+#endif
                                    path,
                                    "",
                                    NULL };
@@ -641,7 +768,11 @@ update_directory(const char* path, const char* unmount_when_done) {
     struct dirent* de;
     d = opendir(path);
     if (d == NULL) {
+#ifndef USE_CHINESE_FONT
         LOGE("error opening %s: %s\n", path, strerror(errno));
+#else
+        LOGE("打开 %s 时出错: %s\n", path, strerror(errno));
+#endif
         if (unmount_when_done != NULL) {
             ensure_path_unmounted(unmount_when_done);
         }
@@ -729,7 +860,11 @@ update_directory(const char* path, const char* unmount_when_done) {
             strlcat(new_path, "/", PATH_MAX);
             strlcat(new_path, item, PATH_MAX);
 
+#ifndef USE_CHINESE_FONT
             ui_print("\n-- Install %s ...\n", path);
+#else
+            ui_print("\n-- 正在刷机 %s ...\n", path);
+#endif
             set_sdcard_update_bootloader_message();
             char* copy = copy_sideloaded_package(new_path);
             if (unmount_when_done != NULL) {
@@ -758,10 +893,18 @@ update_directory(const char* path, const char* unmount_when_done) {
 
 static void
 wipe_data(int confirm) {
+#ifndef USE_CHINESE_FONT
     if (confirm && !confirm_selection( "Confirm wipe of all user data?", "Yes - Wipe all user data"))
+#else
+    if (confirm && !confirm_selection( "确认清除所有的用户数据？", "是 - 清除所有用户数据"))
+#endif
         return;
 
+#ifndef USE_CHINESE_FONT
     ui_print("\n-- Wiping data...\n");
+#else
+    ui_print("\n-- 正在清除数据...\n");
+#endif
     device_wipe_data();
     erase_volume("/data");
     erase_volume("/cache");
@@ -770,7 +913,11 @@ wipe_data(int confirm) {
     }
     erase_volume("/sd-ext");
     erase_volume(get_android_secure_path());
+#ifndef USE_CHINESE_FONT
     ui_print("Data wipe complete.\n");
+#else
+    ui_print("数据清除完成。\n");
+#endif
 }
 
 static void headless_wait() {
@@ -818,11 +965,23 @@ prompt_and_wait() {
                     break;
 
                 case ITEM_WIPE_CACHE:
+#ifndef USE_CHINESE_FONT
                     if (confirm_selection("Confirm wipe?", "Yes - Wipe Cache"))
+#else
+                    if (confirm_selection("确认清除？", "是 - 清除缓存"))
+#endif
                     {
+#ifndef USE_CHINESE_FONT
                         ui_print("\n-- Wiping cache...\n");
+#else
+                        ui_print("\n-- 正在清除缓存...\n");
+#endif
                         erase_volume("/cache");
+#ifndef USE_CHINESE_FONT
                         ui_print("Cache wipe complete.\n");
+#else
+                        ui_print("缓存清除完成。\n");
+#endif
                         if (!ui_text_visible()) return;
                     }
                     break;
@@ -868,11 +1027,19 @@ setup_adbd() {
     if (stat(key_src, &f) == 0) {
         FILE *file_src = fopen(key_src, "r");
         if (file_src == NULL) {
+#ifndef USE_CHINESE_FONT
             LOGE("Can't open %s\n", key_src);
+#else
+            LOGE("无法打开 %s\n", key_src);
+#endif
         } else {
             FILE *file_dest = fopen(key_dest, "w");
             if (file_dest == NULL) {
+#ifndef USE_CHINESE_FONT
                 LOGE("Can't open %s\n", key_dest);
+#else
+                LOGE("无法打开 %s\n", key_dest);
+#endif
             } else {
                 char buf[4096];
                 while (fgets(buf, sizeof(buf), file_src)) fputs(buf, file_dest);
@@ -999,33 +1166,48 @@ main(int argc, char **argv) {
     // If these fail, there's not really anywhere to complain...
     freopen(TEMPORARY_LOG_FILE, "a", stdout); setbuf(stdout, NULL);
     freopen(TEMPORARY_LOG_FILE, "a", stderr); setbuf(stderr, NULL);
+#ifndef USE_CHINESE_FONT
     printf("Starting recovery on %s\n", ctime(&start));
+#else
+    printf("recovery 启动时间：%s\n", ctime(&start));
+#endif
 
     device_ui_init(&ui_parameters);
     ui_init();
-    ui_print(EXPAND(RECOVERY_VERSION)"\n");
+    //ui_print(EXPAND(RECOVERY_VERSION)"\n");
+#ifndef USE_CHINESE_FONT
+    ui_print("Author    : ZJL@AnZhi.com\n");
+    ui_print("Build Time: "EXPAND(RECOVERY_BUILD_TIME)"\n");
+#else
+    ui_print("编译作者：ZJL@ATX团队\n");
+    ui_print("编译时间："EXPAND(RECOVERY_BUILD_TIME)"\n");
+#endif
 
 #ifdef BOARD_RECOVERY_SWIPE
 #ifndef BOARD_TOUCH_RECOVERY
     //display directions for swipe controls
-    ui_print("You can use gestures in this recovery.\n");
+#ifndef USE_CHINESE_FONT
     ui_print("Swipe up/down to change selections.\n");
-    ui_print("Swipe to the right -> for enter.\n");
-    ui_print("Swipe to the left <- for back.\n");
+    ui_print("Swipe to the right for enter.\n");
+    ui_print("Swipe to the left for back.\n");
+#else
+    ui_print("上下滑动更改选择。\n");
+    ui_print("右滑为确认选择。\n");
+    ui_print("左滑为返回。\n");
 #endif
 #endif
-
-    ui_print("Home: http://www.mfunz.com\n");
-    ui_print("Forum: http://bbs.mfunz.com\n");
-    ui_print("Compiled by "EXPAND(RECOVERY_BUILDER)" on "EXPAND(RECOVERY_BUILD_DATE)"\n");
-    ui_print("Copyright (C) 2012 - 2014 The MoKee OpenSource Project\n");
+#endif
 
     load_volume_table();
     process_volumes();
     vold_client_start(&v_callbacks, 0);
     vold_set_automount(1);
     setup_legacy_storage_paths();
+#ifndef USE_CHINESE_FONT
     LOGI("Processing arguments.\n");
+#else
+    LOGI("正在处理参数。\n");
+#endif
     ensure_path_mounted(LAST_LOG_FILE);
     rotate_last_logs(10);
     get_args(&argc, &argv);
@@ -1037,7 +1219,11 @@ main(int argc, char **argv) {
     int sideload = 0;
     int headless = 0;
 
+#ifndef USE_CHINESE_FONT
     LOGI("Checking arguments.\n");
+#else
+    LOGI("正在检查参数。\n");
+#endif
     int arg;
     while ((arg = getopt_long(argc, argv, "", OPTIONS, NULL)) != -1) {
         switch (arg) {
@@ -1058,7 +1244,11 @@ main(int argc, char **argv) {
         case 't': ui_show_text(1); break;
         case 'l': sideload = 1; break;
         case '?':
+#ifndef USE_CHINESE_FONT
             LOGE("Invalid command argument\n");
+#else
+            LOGE("无效的命令参数\n");
+#endif
             continue;
         }
     }
@@ -1071,7 +1261,11 @@ main(int argc, char **argv) {
 
     if (!sehandle) {
         fprintf(stderr, "Warning: No file_contexts\n");
+#ifndef USE_CHINESE_FONT
         ui_print("Warning:  No file_contexts\n");
+#else
+        ui_print("警告：无 file_contexts\n");
+#endif
     }
 
     LOGI("device_recovery_start()\n");
@@ -1108,7 +1302,11 @@ main(int argc, char **argv) {
         status = install_package(update_package);
         if (status != INSTALL_SUCCESS) {
             copy_logs();
+#ifndef USE_CHINESE_FONT
             ui_print("Installation aborted.\n");
+#else
+            ui_print("刷机已中止。\n");
+#endif
         }
     } else if (wipe_data) {
         if (device_wipe_data()) status = INSTALL_ERROR;
@@ -1119,16 +1317,28 @@ main(int argc, char **argv) {
         if (wipe_cache && erase_volume("/cache")) status = INSTALL_ERROR;
         if (status != INSTALL_SUCCESS) {
             copy_logs();
+#ifndef USE_CHINESE_FONT
             ui_print("Data wipe failed.\n");
+#else
+            ui_print("数据清除失败。\n");
+#endif
         }
     } else if (wipe_cache) {
         if (wipe_cache && erase_volume("/cache")) status = INSTALL_ERROR;
         if (status != INSTALL_SUCCESS) {
             copy_logs();
+#ifndef USE_CHINESE_FONT
             ui_print("Cache wipe failed.\n");
+#else
+            ui_print("缓存清除失败。\n");
+#endif
         }
     } else {
+#ifndef USE_CHINESE_FONT
         LOGI("Checking for extendedcommand...\n");
+#else
+        LOGI("正在检查 extendedcommand...\n");
+#endif
         status = INSTALL_ERROR;  // No command specified
         // we are starting up in user initiated recovery here
         // let's set up some default options
@@ -1136,11 +1346,15 @@ main(int argc, char **argv) {
         is_user_initiated_recovery = 1;
         if (!headless) {
             ui_set_show_text(1);
-            ui_set_background(BACKGROUND_ICON_CLOCKWORK);
+            ui_set_background(BACKGROUND_ICON_ATX_ANZHI);
         }
 
         if (extendedcommand_file_exists()) {
+#ifndef USE_CHINESE_FONT
             LOGI("Running extendedcommand...\n");
+#else
+            LOGI("正在执行 extendedcommand...\n");
+#endif
             int ret;
             if (0 == (ret = run_and_remove_extendedcommand())) {
                 status = INSTALL_SUCCESS;
@@ -1150,7 +1364,11 @@ main(int argc, char **argv) {
                 handle_failure(ret);
             }
         } else {
+#ifndef USE_CHINESE_FONT
             LOGI("Skipping execution of extendedcommand, file not found...\n");
+#else
+            LOGI("跳过执行 extendedcommand，未找到文件...\n");
+#endif
         }
     }
 
@@ -1181,7 +1399,11 @@ main(int argc, char **argv) {
 
     // Otherwise, get ready to boot the main system...
     finish_recovery(send_intent);
+#ifndef USE_CHINESE_FONT
     ui_print("Rebooting...\n");
+#else
+    ui_print("重启中...\n");
+#endif
     reboot_main_system(ANDROID_RB_RESTART, 0, 0);
 
     return EXIT_SUCCESS;

@@ -37,12 +37,20 @@ int vold_mount_volume(const char* path, int wait) {
     int state = vold_get_volume_state(path);
 
     if (state == State_Mounted) {
+#ifndef USE_CHINESE_FONT
         LOGI("Volume %s already mounted\n", path);
+#else
+        LOGI("卷 %s 已挂载\n", path);
+#endif
         return 0;
     }
 
     if (state != State_Idle) {
+#ifndef USE_CHINESE_FONT
         LOGI("Volume %s is not idle, current state is %d\n", path, state);
+#else
+        LOGI("卷 %s 并未闲置，当前状态为：%d\n", path, state);
+#endif
         return -1;
     }
 
@@ -59,12 +67,20 @@ int vold_unmount_volume(const char* path, int force, int wait) {
     int state = vold_get_volume_state(path);
 
     if (state <= State_Idle) {
+#ifndef USE_CHINESE_FONT
         LOGI("Volume %s is not mounted\n", path);
+#else
+        LOGI("卷 %s 未挂载\n", path);
+#endif
         return 0;
     }
 
     if (state != State_Mounted) {
+#ifndef USE_CHINESE_FONT
         LOGI("Volume %s cannot be unmounted in state %d\n", path, state);
+#else
+        LOGI("卷 %s 无法在状态为 %d 时卸载\n", path, state);
+#endif
         return -1;
     }
 
@@ -89,7 +105,11 @@ int vold_unshare_volume(const char* path, int mount) {
     int ret = 0;
 
     if (state != State_Shared) {
+#ifndef USE_CHINESE_FONT
         LOGE("Volume %s is not shared - state=%d\n", path, state);
+#else
+        LOGE("卷 %s 未共享 - 状态=%d\n", path, state);
+#endif
         return 0;
     }
 
@@ -114,6 +134,7 @@ int vold_custom_format_volume(const char* path, const char* fstype, int wait) {
 
 const char* volume_state_to_string(int state) {
     if (state == State_Init)
+#ifndef USE_CHINESE_FONT
         return "Initializing";
     else if (state == State_NoMedia)
         return "No-Media";
@@ -135,5 +156,28 @@ const char* volume_state_to_string(int state) {
         return "Shared-Mounted";
     else
         return "Unknown-Error";
+#else
+        return "初始化中";
+    else if (state == State_NoMedia)
+        return "非大容量存储设备";
+    else if (state == State_Idle)
+        return "空闲-未挂载";
+    else if (state == State_Pending)
+        return "挂起中";
+    else if (state == State_Mounted)
+        return "已挂载";
+    else if (state == State_Unmounting)
+        return "卸载中";
+    else if (state == State_Checking)
+        return "检查中";
+    else if (state == State_Formatting)
+        return "格式化中";
+    else if (state == State_Shared)
+        return "共享-未挂载";
+    else if (state == State_SharedMnt)
+        return "共享-已挂载";
+    else
+        return "未知错误";
+#endif
 }
 

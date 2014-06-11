@@ -54,48 +54,80 @@ handle_firmware_update(char* type, char* filename, ZipArchive* zip) {
     if (strncmp(filename, "PACKAGE:", 8) == 0) {
         entry = mzFindZipEntry(zip, filename+8);
         if (entry == NULL) {
+#ifndef USE_CHINESE_FONT
             LOGE("Failed to find \"%s\" in package", filename+8);
+#else
+            LOGE("无法在刷机包中找到 \"%s\"", filename+8);
+#endif
             return INSTALL_ERROR;
         }
         data_size = entry->uncompLen;
     } else {
         struct stat st_data;
         if (stat(filename, &st_data) < 0) {
+#ifndef USE_CHINESE_FONT
             LOGE("Error stat'ing %s: %s\n", filename, strerror(errno));
+#else
+            LOGE("统计时出错 %s: %s\n", filename, strerror(errno));
+#endif
             return INSTALL_ERROR;
         }
         data_size = st_data.st_size;
     }
 
+#ifndef USE_CHINESE_FONT
     LOGI("type is %s; size is %d; file is %s\n",
+#else
+    LOGI("类型为 %s; 大小为 %d; 文件为 %s\n",
+#endif
          type, data_size, filename);
 
     char* data = malloc(data_size);
     if (data == NULL) {
+#ifndef USE_CHINESE_FONT
         LOGI("Can't allocate %d bytes for firmware data\n", data_size);
+#else
+        LOGI("无法为固件数据分配 %d 字节的空间\n", data_size);
+#endif
         return INSTALL_ERROR;
     }
 
     if (entry) {
         if (mzReadZipEntry(zip, entry, data, data_size) == false) {
+#ifndef USE_CHINESE_FONT
             LOGE("Failed to read \"%s\" from package", filename+8);
+#else
+            LOGE("无法读取刷机包中的 \"%s\"", filename+8);
+#endif
             return INSTALL_ERROR;
         }
     } else {
         FILE* f = fopen(filename, "rb");
         if (f == NULL) {
+#ifndef USE_CHINESE_FONT
             LOGE("Failed to open %s: %s\n", filename, strerror(errno));
+#else
+            LOGE("无法打开 %s: %s\n", filename, strerror(errno));
+#endif
             return INSTALL_ERROR;
         }
         if (fread(data, 1, data_size, f) != data_size) {
+#ifndef USE_CHINESE_FONT
             LOGE("Failed to read firmware data: %s\n", strerror(errno));
+#else
+            LOGE("无法读取固件数据: %s\n", strerror(errno));
+#endif
             return INSTALL_ERROR;
         }
         fclose(f);
     }
 
     if (remember_firmware_update(type, data, data_size)) {
+#ifndef USE_CHINESE_FONT
         LOGE("Can't store %s image\n", type);
+#else
+        LOGE("无法保存 %s 镜像\n", type);
+#endif
         free(data);
         return INSTALL_ERROR;
     }
@@ -125,7 +157,11 @@ static int set_legacy_props() {
     }
 
     if (rename(DEV_PROP_PATH, DEV_PROP_BACKUP_PATH) != 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("Could not rename properties path: %s\n", DEV_PROP_PATH);
+#else
+        LOGE("无法重命名属性设置文件路径：%s\n", DEV_PROP_PATH);
+#endif
         return -1;
     } else {
         legacy_props_path_modified = true;
@@ -136,7 +172,11 @@ static int set_legacy_props() {
 
 static int unset_legacy_props() {
     if (rename(DEV_PROP_BACKUP_PATH, DEV_PROP_PATH) != 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("Could not rename properties path: %s\n", DEV_PROP_BACKUP_PATH);
+#else
+        LOGE("无法重命名属性设置文件路径：%s\n", DEV_PROP_BACKUP_PATH);
+#endif
         return -1;
     } else {
         legacy_props_path_modified = false;
@@ -160,10 +200,17 @@ try_update_binary(const char *path, ZipArchive *zip) {
         const ZipEntry* update_script_entry =
                 mzFindZipEntry(zip, ASSUMED_UPDATE_SCRIPT_NAME);
         if (update_script_entry != NULL) {
+#ifndef USE_CHINESE_FONT
             ui_print("Amend scripting (update-script) is no longer supported.\n");
             ui_print("Amend scripting was deprecated by Google in Android 1.5.\n");
             ui_print("It was necessary to remove it when upgrading to the ClockworkMod 3.0 Gingerbread based recovery.\n");
             ui_print("Please switch to Edify scripting (updater-script and update-binary) to create working update zip packages.\n");
+#else
+            ui_print("Amend 格式的脚本(update-script)现在已不被支持。\n");
+            ui_print("Amend 格式的脚本自 Android 1.5 起已被谷歌取消支持。\n");
+            ui_print("当使用高于 3.0 版本的 ClockworkMod 时，需要移除 Amend 格式的脚本。\n");
+            ui_print("请将脚本转换为 Edify 格式的脚本(updater-script 加 update-binary)以便做出可以使用的刷机包。\n");
+#endif
             return INSTALL_UPDATE_BINARY_MISSING;
         }
 
@@ -176,14 +223,22 @@ try_update_binary(const char *path, ZipArchive *zip) {
     int fd = creat(binary, 0755);
     if (fd < 0) {
         mzCloseZipArchive(zip);
+#ifndef USE_CHINESE_FONT
         LOGE("Can't make %s\n", binary);
+#else
+        LOGE("无法创建 %s\n", binary);
+#endif
         return 1;
     }
     bool ok = mzExtractZipEntryToFile(zip, binary_entry, fd);
     close(fd);
 
     if (!ok) {
+#ifndef USE_CHINESE_FONT
         LOGE("Can't copy %s\n", ASSUMED_UPDATE_BINARY_NAME);
+#else
+        LOGE("无法复制 %s\n", ASSUMED_UPDATE_BINARY_NAME);
+#endif
         mzCloseZipArchive(zip);
         return 1;
     }
@@ -207,7 +262,11 @@ try_update_binary(const char *path, ZipArchive *zip) {
     bool foundsetmeta = false;
 
     if (updaterfile == NULL) {
+#ifndef USE_CHINESE_FONT
         LOGE("Can't find %s for validation\n", ASSUMED_UPDATE_BINARY_NAME);
+#else
+        LOGE("无法找到 %s 以进行校验\n", ASSUMED_UPDATE_BINARY_NAME);
+#endif
         return 1;
     }
     fseek(updaterfile, 0, SEEK_SET);
@@ -236,11 +295,19 @@ try_update_binary(const char *path, ZipArchive *zip) {
 
     /* Set legacy properties */
     if (foundsetperm && !foundsetmeta) {
+#ifndef USE_CHINESE_FONT
         LOGI("Using legacy property environment for update-binary...\n");
         if (set_legacy_props() != 0) {
             LOGE("Legacy property environment did not init successfully. Properties may not be detected.\n");
         } else {
             LOGI("Legacy property environment initialized.\n");
+#else
+        LOGI("为 update-binary 使用旧版属性环境...\n");
+        if (set_legacy_props() != 0) {
+            LOGE("旧版属性环境初始化失败。可能未检测到属性设置文件。\n");
+        } else {
+            LOGI("已初始化旧版属性环境。\n");
+#endif
         }
     }
 
@@ -327,7 +394,11 @@ try_update_binary(const char *path, ZipArchive *zip) {
 
             if (type != NULL && filename != NULL) {
                 if (firmware_type != NULL) {
+#ifndef USE_CHINESE_FONT
                     LOGE("ignoring attempt to do multiple firmware updates");
+#else
+                    LOGE("忽略多个固件更新的操作");
+#endif
                 } else {
                     firmware_type = strdup(type);
                     firmware_filename = strdup(filename);
@@ -341,7 +412,11 @@ try_update_binary(const char *path, ZipArchive *zip) {
                 ui_print("\n");
             }
         } else {
+#ifndef USE_CHINESE_FONT
             LOGE("unknown command [%s]\n", command);
+#else
+            LOGE("未知命令 [%s]\n", command);
+#endif
         }
     }
     fclose(from_child);
@@ -352,14 +427,24 @@ try_update_binary(const char *path, ZipArchive *zip) {
     /* Unset legacy properties */
     if (legacy_props_path_modified) {
         if (unset_legacy_props() != 0) {
+#ifndef USE_CHINESE_FONT
             LOGE("Legacy property environment did not disable successfully. Legacy properties may still be in use.\n");
         } else {
             LOGI("Legacy property environment disabled.\n");
+#else
+            LOGE("未成功禁用旧版属性环境。旧版属性环境可能仍然在使用中。\n");
+        } else {
+            LOGI("已禁用旧版属性环境。n");
+#endif
         }
     }
 
     if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("Error in %s\n(Status %d)\n", path, WEXITSTATUS(status));
+#else
+        LOGE("%s 中出错\n(状态 %d)\n", path, WEXITSTATUS(status));
+#endif
         mzCloseZipArchive(zip);
         return INSTALL_ERROR;
     }
@@ -377,7 +462,11 @@ static int
 really_install_package(const char *path)
 {
     ui_set_background(BACKGROUND_ICON_INSTALLING);
+#ifndef USE_CHINESE_FONT
     ui_print("Finding update package...\n");
+#else
+    ui_print("正在查找刷机包...\n");
+#endif
     ui_show_indeterminate_progress();
 
     // Resolve symlink in case legacy /sdcard path is used
@@ -400,14 +489,26 @@ really_install_package(const char *path)
         }
     }
 
+#ifndef USE_CHINESE_FONT
     LOGI("Update location: %s\n", path);
+#else
+    LOGI("刷机包位置: %s\n", path);
+#endif
 
     if (ensure_path_mounted(path) != 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("Can't mount %s\n", path);
+#else
+        LOGE("无法挂载 %s\n", path);
+#endif
         return INSTALL_CORRUPT;
     }
 
+#ifndef USE_CHINESE_FONT
     ui_print("Opening update package...\n");
+#else
+    ui_print("正在打开刷机包...\n");
+#endif
 
     int err;
 
@@ -415,24 +516,48 @@ really_install_package(const char *path)
         int numKeys;
         Certificate* loadedKeys = load_keys(PUBLIC_KEYS_FILE, &numKeys);
         if (loadedKeys == NULL) {
+#ifndef USE_CHINESE_FONT
             LOGE("Failed to load keys\n");
+#else
+            LOGE("无法载入密钥\n");
+#endif
             return INSTALL_CORRUPT;
         }
+#ifndef USE_CHINESE_FONT
         LOGI("%d key(s) loaded from %s\n", numKeys, PUBLIC_KEYS_FILE);
+#else
+        LOGI("%d 个密钥已从 %s 中载入\n", numKeys, PUBLIC_KEYS_FILE);
+#endif
 
         // Give verification half the progress bar...
+#ifndef USE_CHINESE_FONT
         ui_print("Verifying update package...\n");
+#else
+        ui_print("正在校验刷机包...\n");
+#endif
         ui_show_progress(
                 VERIFICATION_PROGRESS_FRACTION,
                 VERIFICATION_PROGRESS_TIME);
 
         err = verify_file(path, loadedKeys, numKeys);
         free(loadedKeys);
+#ifndef USE_CHINESE_FONT
         LOGI("verify_file returned %d\n", err);
+#else
+        LOGI("verify_file 返回 %d\n", err);
+#endif
         if (err != VERIFY_SUCCESS) {
+#ifndef USE_CHINESE_FONT
             LOGE("signature verification failed\n");
+#else
+            LOGE("签名校验失败\n");
+#endif
             ui_show_text(1);
+#ifndef USE_CHINESE_FONT
             if (!confirm_selection("Install Untrusted Package?", "Yes - Install untrusted zip"))
+#else
+            if (!confirm_selection("刷入不信任的刷机包？", "是 - 刷入不信任的刷机包"))
+#endif
                 return INSTALL_CORRUPT;
         }
     }
@@ -442,13 +567,21 @@ really_install_package(const char *path)
     ZipArchive zip;
     err = mzOpenZipArchive(path, &zip);
     if (err != 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("Can't open %s\n(%s)\n", path, err != -1 ? strerror(err) : "bad");
+#else
+        LOGE("无法打开 %s\n(%s)\n", path, err != -1 ? strerror(err) : "已损坏");
+#endif
         return INSTALL_CORRUPT;
     }
 
     /* Verify and install the contents of the package.
      */
+#ifndef USE_CHINESE_FONT
     ui_print("Installing update...\n");
+#else
+    ui_print("正在刷入刷机包...\n");
+#endif
     return try_update_binary(path, &zip);
 }
 
@@ -460,7 +593,11 @@ install_package(const char* path)
         fputs(path, install_log);
         fputc('\n', install_log);
     } else {
+#ifndef USE_CHINESE_FONT
         LOGE("failed to open last_install: %s\n", strerror(errno));
+#else
+        LOGE("无法打开 last_install: %s\n", strerror(errno));
+#endif
     }
     int result = really_install_package(path);
     if (install_log) {

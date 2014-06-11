@@ -22,6 +22,7 @@
 
 char* MENU_HEADERS[] = { NULL };
 
+#ifndef USE_CHINESE_FONT
 char* MENU_ITEMS[] = { "reboot system now",
                        "install zip",
                        "wipe data/factory reset",
@@ -29,6 +30,15 @@ char* MENU_ITEMS[] = { "reboot system now",
                        "backup and restore",
                        "mounts and storage",
                        "advanced",
+#else
+char* MENU_ITEMS[] = { "立即重启系统",
+                       "刷入刷机包",
+                       "清除数据/恢复出厂设置",
+                       "清除缓存分区",
+                       "备份和还原",
+                       "挂载及 U 盘模式",
+                       "高级功能",
+#endif
                        NULL };
 
 void device_ui_init(UIParameters* ui_parameters) {

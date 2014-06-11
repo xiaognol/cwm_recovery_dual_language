@@ -38,7 +38,11 @@ static void
 set_usb_driver(int enabled) {
     int fd = open("/sys/class/android_usb/android0/enable", O_WRONLY);
     if (fd < 0) {
+#ifndef USE_CHINESE_FONT
         ui_print("failed to open driver control: %s\n", strerror(errno));
+#else
+        ui_print("无法打开驱动控制器: %s\n", strerror(errno));
+#endif
         return;
     }
 
@@ -50,11 +54,19 @@ set_usb_driver(int enabled) {
     }
 
     if (status < 0) {
+#ifndef USE_CHINESE_FONT
         ui_print("failed to set driver control: %s\n", strerror(errno));
+#else
+        ui_print("无法设置驱动控制器: %s\n", strerror(errno));
+#endif
     }
 
     if (close(fd) < 0) {
+#ifndef USE_CHINESE_FONT
         ui_print("failed to close driver control: %s\n", strerror(errno));
+#else
+        ui_print("无法关闭驱动控制器: %s\n", strerror(errno));
+#endif
     }
 }
 
@@ -70,7 +82,11 @@ maybe_restart_adbd() {
     char value[PROPERTY_VALUE_MAX+1];
     int len = property_get("ro.debuggable", value, NULL);
     if (len == 1 && value[0] == '1') {
+#ifndef USE_CHINESE_FONT
         ui_print("Restarting adbd...\n");
+#else
+        ui_print("正在重启 adbd...\n");
+#endif
         set_usb_driver(1);
         property_set("ctl.start", "adbd");
     }
@@ -85,15 +101,27 @@ void *adb_sideload_thread(void* v) {
 
     int status;
     waitpid(data->child, &status, 0);
+#ifndef USE_CHINESE_FONT
     LOGI("sideload process finished\n");
+#else
+    LOGI("sideload 进程已完成\n");
+#endif
     
     ui_cancel_wait_key();
 
     if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+#ifndef USE_CHINESE_FONT
         ui_print("status %d\n", WEXITSTATUS(status));
+#else
+        ui_print("状态 %d\n", WEXITSTATUS(status));
+#endif
     }
 
+#ifndef USE_CHINESE_FONT
     LOGI("sideload thread finished\n");
+#else
+    LOGI("sideload 线程已完成\n");
+#endif
     return NULL;
 }
 
@@ -102,8 +130,13 @@ apply_from_adb() {
     stop_adbd();
     set_usb_driver(1);
 
+#ifndef USE_CHINESE_FONT
     ui_print("\n\nSideload started ...\nNow send the package you want to apply\n"
               "to the device with \"adb sideload <filename>\"...\n\n");
+#else
+    ui_print("\n\nSideload 模式开始...\n请从电脑端输入命令开始刷机\n"
+              "命令格式:\"adb sideload <文件名>\"...\n\n");
+#endif
 
     struct sideload_waiter_data data;
     if ((data.child = fork()) == 0) {
@@ -119,7 +152,11 @@ apply_from_adb() {
                                 NULL
     };
 
+#ifndef USE_CHINESE_FONT
     static char* list[] = { "Cancel sideload", NULL };
+#else
+    static char* list[] = { "取消 sideload", NULL };
+#endif
     
     get_menu_selection(headers, list, 0, 0);
 
@@ -134,10 +171,18 @@ apply_from_adb() {
     struct stat st;
     if (stat(ADB_SIDELOAD_FILENAME, &st) != 0) {
         if (errno == ENOENT) {
+#ifndef USE_CHINESE_FONT
             ui_print("No package received.\n");
+#else
+            ui_print("未接收到刷机包。\n");
+#endif
             ui_set_background(BACKGROUND_ICON_ERROR);
         } else {
+#ifndef USE_CHINESE_FONT
             ui_print("Error reading package:\n  %s\n", strerror(errno));
+#else
+            ui_print("读取刷机包时出错:\n  %s\n", strerror(errno));
+#endif
             ui_set_background(BACKGROUND_ICON_ERROR);
         }
         return INSTALL_ERROR;
@@ -148,12 +193,20 @@ apply_from_adb() {
 
     if (install_status != INSTALL_SUCCESS) {
         ui_set_background(BACKGROUND_ICON_ERROR);
+#ifndef USE_CHINESE_FONT
         ui_print("Installation aborted.\n");
+#else
+        ui_print("刷机已中止。\n");
+#endif
     }
 
 #ifdef ENABLE_LOKI
     else if (loki_support_enabled) {
+#ifndef USE_CHINESE_FONT
         ui_print("Checking if loki-fying is needed");
+#else
+        ui_print("检查是否需要 loki-fying");
+#endif
         install_status = loki_check();
         if (install_status != INSTALL_SUCCESS)
             ui_set_background(BACKGROUND_ICON_ERROR);

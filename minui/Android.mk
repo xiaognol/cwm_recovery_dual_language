@@ -5,17 +5,22 @@ LOCAL_SRC_FILES := events.c resources.c
 ifneq ($(BOARD_CUSTOM_GRAPHICS),)
   LOCAL_SRC_FILES += $(BOARD_CUSTOM_GRAPHICS)
 else
-  LOCAL_SRC_FILES += graphics.c graphics_overlay.c
+  ifeq ($(findstring fontcn,$(BOARD_USE_CUSTOM_RECOVERY_FONT)),fontcn)
+    LOCAL_SRC_FILES += graphics_cn.c
+  else
+    LOCAL_SRC_FILES += graphics.c
+  endif
 endif
 
 LOCAL_C_INCLUDES +=\
     external/libpng\
     external/zlib
 
-ifeq ($(call is-vendor-board-platform,QCOM),true)
-  LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
-  LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-endif
+#ifeq ($(call is-vendor-board-platform,QCOM),true)
+#  LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+#  LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+#endif
+
 
 LOCAL_MODULE := libminui
 

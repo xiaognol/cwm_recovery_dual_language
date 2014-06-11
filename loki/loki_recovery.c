@@ -41,7 +41,11 @@ static int loki_dump_partitions() {
     while (target_partitions[i] != NULL) {
         sprintf(cmd, "dd if=%s of=%s", target_partitions[i], dump_images[i]);
         if (__system(cmd) != 0) {
+#ifndef USE_CHINESE_FONT
             LOGE("[-] Failed to dump %s\n", target_partitions[i]);
+#else
+            LOGE("[-] 无法导出 %s。\n", target_partitions[i]);
+#endif
             return 1;
         }
         ++i;
@@ -60,19 +64,31 @@ static int needs_loki_patch(const char *partition_image) {
 
     ifd = open(partition_image, O_RDONLY);
     if (ifd < 0) {
+#ifndef USE_CHINESE_FONT
         LOGE("[-] Failed to open %s for reading.\n", partition_image);
+#else
+        LOGE("[-] 无法打开 %s for 进行读取。\n", partition_image);
+#endif
         return 0;
     }
 
     /* Map the image to be flashed */
     if (fstat(ifd, &st)) {
+#ifndef USE_CHINESE_FONT
         LOGE("[-] fstat() failed.\n");
+#else
+        LOGE("[-] fstat() 失败。\n");
+#endif
         return 0;
     }
 
     orig = mmap(0, (st.st_size + 0x2000 + 0xfff) & ~0xfff, PROT_READ, MAP_PRIVATE, ifd, 0);
     if (orig == MAP_FAILED) {
+#ifndef USE_CHINESE_FONT
         LOGE("[-] Failed to mmap Loki image.\n");
+#else
+        LOGE("[-] mmap Loki 镜像失败。\n");
+#endif
         return 0;
     }
 
@@ -81,7 +97,11 @@ static int needs_loki_patch(const char *partition_image) {
 
     /* Verify this is a Loki image */
     if (memcmp(loki_hdr->magic, "LOKI", 4)) {
+#ifndef USE_CHINESE_FONT
         ui_print("%s needs lokifying.\n", partition_image);
+#else
+        ui_print("%s 需要 lokifying。\n", partition_image);
+#endif
         return 1;
     }
 
@@ -98,9 +118,15 @@ int loki_check() {
     while (!ret && target_partitions[i] != NULL) {
         if (needs_loki_patch(dump_images[i])) {
             if ((ret = loki_patch(target_partitions[i], ABOOT_DUMP_IMAGE, dump_images[i], LOKI_IMAGE)) != 0)
+#ifndef USE_CHINESE_FONT
                 LOGE("Error loki-ifying the %s image.\n", target_partitions[i]);
             else if ((ret = loki_flash(target_partitions[i], LOKI_IMAGE)) != 0)
                 LOGE("Error loki-flashing the %s image.\n", target_partitions[i]);
+#else
+                LOGE("loki-ifying 镜像 %s 时出错。\n", target_partitions[i]);
+            else if ((ret = loki_flash(target_partitions[i], LOKI_IMAGE)) != 0)
+                LOGE("loki-flashing 镜像 %s 时出错。\n", target_partitions[i]);
+#endif
         }
         ++ i;
     }

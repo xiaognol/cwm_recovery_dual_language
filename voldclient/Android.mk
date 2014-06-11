@@ -10,5 +10,8 @@ LOCAL_C_INCLUDES :=         	\
     system/core/include     	\
     system/core/libcutils   	\
     system/vold
+ifeq ($(findstring fontcn,$(BOARD_USE_CUSTOM_RECOVERY_FONT)),fontcn)
+  LOCAL_CFLAGS += -DUSE_CHINESE_FONT
+endif
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_STATIC_LIBRARY)
