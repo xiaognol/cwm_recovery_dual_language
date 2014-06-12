@@ -30,6 +30,7 @@ char* MENU_ITEMS[] = { "reboot system now",
                        "backup and restore",
                        "mounts and storage",
                        "advanced",
+		       "select langurage",
 #else
 char* MENU_ITEMS[] = { "立即重启系统",
                        "刷入刷机包",
@@ -38,6 +39,7 @@ char* MENU_ITEMS[] = { "立即重启系统",
                        "备份和还原",
                        "挂载及 U 盘模式",
                        "高级功能",
+		       "选择语言",
 #endif
                        NULL };
 

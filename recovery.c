@@ -920,6 +920,33 @@ wipe_data(int confirm) {
 #endif
 }
 
+void chose_langurage_menu() {
+    // chose langurage
+    int old_val = ui_is_showing_back_button();
+    ui_set_showing_back_button(0);
+    static const char* headers[] = { "选择语言",
+                                     "",
+                                     NULL
+    };
+
+    static char* list[] = { "English",
+							"中文",NULL };
+
+    for (;;) {
+        int chosen_item = get_menu_selection(headers, list, 0, 0);
+        if (chosen_item == 1){
+            property_set("sys.langurage.chinese","0");
+	    break;
+			}
+	else// for english
+		{
+    		property_set("sys.langurage.chinese","1");
+		break;
+		}
+    }
+
+    ui_set_showing_back_button(old_val);
+}
 static void headless_wait() {
     ui_show_text(0);
     const char** headers = prepend_title((const char**)MENU_HEADERS);
@@ -933,6 +960,7 @@ int ui_menu_level = 1;
 int ui_root_menu = 0;
 static void
 prompt_and_wait() {
+	chose_langurage_menu();
     const char** headers = prepend_title((const char**)MENU_HEADERS);
 
     for (;;) {
@@ -1000,6 +1028,9 @@ prompt_and_wait() {
 
                 case ITEM_ADVANCED:
                     ret = show_advanced_menu();
+                    break;
+		case ITEM_LANGURAGE:
+                    chose_langurage_menu();
                     break;
             }
             if (ret == REFRESH) {
@@ -1412,3 +1443,4 @@ main(int argc, char **argv) {
 void set_perf_mode(int on) {
     property_set("recovery.perf.mode", on ? "1" : "0");
 }
+
