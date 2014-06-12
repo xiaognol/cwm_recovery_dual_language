@@ -936,19 +936,53 @@ void chose_langurage_menu() {
         int chosen_item = get_menu_selection(headers, list, 0, 0);
         if (chosen_item == 1){
             property_set("sys.langurage.chinese","0");
+	      langurage = 0;
+	    set_item_menu();
 	    break;
 			}
 	else// for english
 		{
     		property_set("sys.langurage.chinese","1");
+		  langurage = 1;
+	        set_item_menu();
 		break;
 		}
     }
 
     ui_set_showing_back_button(old_val);
 }
+
+extern void set_item_menu() {
+
+
+if ( langurage== 1 ) {
+MENU_ITEMS[0] = "reboot system now";
+MENU_ITEMS[1] = "install zip";
+MENU_ITEMS[2] = "wipe data/factory reset";
+MENU_ITEMS[3] = "wipe cache partition";
+MENU_ITEMS[4] = "backup and restore";
+MENU_ITEMS[5] = "mounts and storage";
+MENU_ITEMS[6] = "advanced";
+MENU_ITEMS[7] = "select langurage";
+MENU_ITEMS[8] = NULL;
+ui_print("change langurage to english\n");
+} else {
+MENU_ITEMS[0] = "立即重启系统";
+MENU_ITEMS[1] = "刷入刷机包";
+MENU_ITEMS[2] = "清除数据/恢复出厂设置";
+MENU_ITEMS[3] = "清除缓存分区";
+MENU_ITEMS[4] = "备份和还原";
+MENU_ITEMS[5] = "挂载及 U 盘模式";
+MENU_ITEMS[6] = "高级功能";
+MENU_ITEMS[7] = "选择语言";
+MENU_ITEMS[8] = NULL;
+ui_print("启用中文。\n");
+	}
+}
+
 static void headless_wait() {
     ui_show_text(0);
+    set_item_menu();
     const char** headers = prepend_title((const char**)MENU_HEADERS);
     for(;;) {
         finish_recovery(NULL);
@@ -961,6 +995,7 @@ int ui_root_menu = 0;
 static void
 prompt_and_wait() {
 	chose_langurage_menu();
+	set_item_menu();
     const char** headers = prepend_title((const char**)MENU_HEADERS);
 
     for (;;) {
@@ -1146,7 +1181,6 @@ static struct vold_callbacks v_callbacks = {
 
 int
 main(int argc, char **argv) {
-
     if (argc == 2 && strcmp(argv[1], "adbd") == 0) {
         adb_main();
         return 0;

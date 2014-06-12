@@ -115,6 +115,9 @@ extern void device_truedualboot_after_load_volume_table();
 #define ITEM_ADVANCED        6
 #define ITEM_LANGURAGE       7
 
+
+int langurage;
+
 // Header text to display above the main menu.
 extern char* MENU_HEADERS[];
 
@@ -135,4 +138,5 @@ extern int ui_handle_key(int key, int visible);
 // call a clean reboot
 void reboot_main_system(int cmd, int flags, char *arg);
 
+extern void set_item_menu();
 #endif

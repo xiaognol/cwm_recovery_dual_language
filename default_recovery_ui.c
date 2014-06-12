@@ -19,10 +19,14 @@
 #include "recovery_ui.h"
 #include "common.h"
 #include "extendedcommands.h"
-
+#include "cutils/properties.h"
+//char langurage[];
+//int ret = property_get("sys.langurage.chinese", langurage, NULL);
 char* MENU_HEADERS[] = { NULL };
+/*extern void set_item_menu() {
 
-#ifndef USE_CHINESE_FONT
+
+if ( langurage== 1 ) {*/
 char* MENU_ITEMS[] = { "reboot system now",
                        "install zip",
                        "wipe data/factory reset",
@@ -31,7 +35,9 @@ char* MENU_ITEMS[] = { "reboot system now",
                        "mounts and storage",
                        "advanced",
 		       "select langurage",
-#else
+			NULL };
+
+/*} else {
 char* MENU_ITEMS[] = { "立即重启系统",
                        "刷入刷机包",
                        "清除数据/恢复出厂设置",
@@ -40,9 +46,10 @@ char* MENU_ITEMS[] = { "立即重启系统",
                        "挂载及 U 盘模式",
                        "高级功能",
 		       "选择语言",
-#endif
-                       NULL };
 
+                       NULL };
+	}
+}*/
 void device_ui_init(UIParameters* ui_parameters) {
 }
 
