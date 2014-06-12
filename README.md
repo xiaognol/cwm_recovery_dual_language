@@ -1,18 +1,20 @@
-   cwm_bootable_recovery_cn 6.0.4.9
+   cwm_bootable_recovery_双语切换版 6.0.4.9
 ==============================
-适配：ZJL@安智ATX团队 机型：C8813Q
+适配：ZJL@安智ATX团队 测试机型：C8813Q
 感谢：ATX龙腾-大星星 的6047汉化代码
-<br /><br /><br />当BoardConfig.mk中定义了recovery的字体且为中文字体时，自动编译为中文版，否则编译为英文版<br />
-例如：
 
-    BOARD_USE_CUSTOM_RECOVERY_FONT := \"fontcn28_15x40.h\"  
-此时编译将使用graphics_cn.c，且recovery界面显示为中文。
+编译配置：
+BOARD_USE_CUSTOM_RECOVERY_FONT := \"fontcn28_15x40.h\"
 
-    BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_15x24.h\"
-此时编译将使用原版graphics.c，且recovery界面显示为英文。
+特性：支持菜单中切换语言，自由选择中文或者英文语言。
 
-<br /><br />制作中参考使用了几位大神/团队提供的代码，特此感谢：
-<br />CyanogenMod : https://github.com/CyanogenMod/android_bootable_recovery
-<br />suky : https://github.com/suky/TWRP_cn
-<br />tenfar : https://github.com/tenfar/android_bootable_recovery_cn
-<br />xiaolu : https://github.com/xiaolu/android_bootable_recovery
+进度：%60
+
+完善中。。。。。。
+
+ZJL@安智ATX-C团队，安智ATX新月
+
+代码中 language失误写成了 langurage  不要在意细节。。。
+
+
+
