@@ -89,11 +89,11 @@ Value* UIPrintFn(const char* name, State* state, int argc, Expr* argv[]) {
 
 Value* RunProgramFn(const char* name, State* state, int argc, Expr* argv[]) {
     if (argc < 1) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         return ErrorAbort(state, "%s() expects at least 1 arg", name);
-#else
+else
         return ErrorAbort(state, "%s() 需要最少 1 个参数", name);
-#endif
+
     }
     char** args = ReadVarArgs(state, argc, argv);
     if (args == NULL) {
@@ -140,11 +140,11 @@ Value* RunProgramFn(const char* name, State* state, int argc, Expr* argv[]) {
 Value* FormatFn(const char* name, State* state, int argc, Expr* argv[]) {
     char* result = NULL;
     if (argc != 1) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         return ErrorAbort(state, "%s() expects 1 arg, got %d", name, argc);
-#else
+else
         return ErrorAbort(state, "%s() 期望的参数为 1 个，但是调用时却使用了 %d 个", name, argc);
-#endif
+
     }
     
     char *path;
@@ -152,22 +152,22 @@ Value* FormatFn(const char* name, State* state, int argc, Expr* argv[]) {
         return NULL;
     }
     
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
     ui_print("Formatting %s...\n", path);
-#else
+else
     ui_print("正在格式化 %s...\n", path);
-#endif
+
     if (0 != format_volume(path)) {
         free(path);
         return StringValue(strdup(""));
     }
     
     if (strcmp(path, "/data") == 0 && has_datadata()) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         ui_print("Formatting /datadata...\n");
-#else
+else
         ui_print("正在格式化 /datadata...\n");
-#endif
+
         if (0 != format_volume("/datadata")) {
             free(path);
             return StringValue(strdup(""));
@@ -185,11 +185,11 @@ done:
 Value* BackupFn(const char* name, State* state, int argc, Expr* argv[]) {
     char* result = NULL;
     if (argc != 1) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         return ErrorAbort(state, "%s() expects 1 args, got %d", name, argc);
-#else
+else
         return ErrorAbort(state, "%s() 期望的参数为 1 个，但是调用时却使用了 %d 个", name, argc);
-#endif
+
     }
     char* path;
     if (ReadArgs(state, argv, 1, &path) < 0) {
@@ -204,11 +204,11 @@ Value* BackupFn(const char* name, State* state, int argc, Expr* argv[]) {
 
 Value* RestoreFn(const char* name, State* state, int argc, Expr* argv[]) {
     if (argc < 1) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         return ErrorAbort(state, "%s() expects at least 1 arg", name);
-#else
+else
         return ErrorAbort(state, "%s() 需要最少 1 个参数", name);
-#endif
+
     }
     char** args = ReadVarArgs(state, argc, argv);
     if (args == NULL) {
@@ -262,11 +262,11 @@ Value* RestoreFn(const char* name, State* state, int argc, Expr* argv[]) {
 Value* InstallZipFn(const char* name, State* state, int argc, Expr* argv[]) {
     char* result = NULL;
     if (argc != 1) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         return ErrorAbort(state, "%s() expects 1 args, got %d", name, argc);
-#else
+else
         return ErrorAbort(state, "%s() 期望的参数为 1 个，但是调用时却使用了 %d 个", name, argc);
-#endif
+
     }
     char* path;
     if (ReadArgs(state, argv, 1, &path) < 0) {
@@ -282,11 +282,11 @@ Value* InstallZipFn(const char* name, State* state, int argc, Expr* argv[]) {
 Value* MountFn(const char* name, State* state, int argc, Expr* argv[]) {
     char* result = NULL;
     if (argc != 1) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         return ErrorAbort(state, "%s() expects 1 args, got %d", name, argc);
-#else
+else
         return ErrorAbort(state, "%s() 期望的参数为 1 个，但是调用时却使用了 %d 个", name, argc);
-#endif
+
     }
     char* path;
     if (ReadArgs(state, argv, 1, &path) < 0) {
@@ -418,11 +418,11 @@ int run_script(char* filename)
     // supposedly not necessary, but let's be safe.
     script_data[script_len] = '\0';
     fclose(file);
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
     LOGI("Running script:\n");
-#else
+else
     LOGI("执行脚本:\n");
-#endif
+
     LOGI("\n%s\n", script_data);
 
     int ret = run_script_from_buffer(script_data, script_len, filename);
@@ -439,55 +439,55 @@ int run_and_remove_extendedcommand()
     remove(EXTENDEDCOMMAND_SCRIPT);
     int i = 0;
     for (i = 20; i > 0; i--) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         ui_print("Waiting for SD Card to mount (%ds)\n", i);
-#else
+else
         ui_print("等待 SD 卡挂载 (%ds)\n", i);
-#endif
+
         if (ensure_path_mounted(primary_path) == 0) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
             ui_print("SD Card mounted...\n");
-#else
+else
             ui_print("已挂载 SD 卡...\n");
-#endif
+
             break;
         }
         sleep(1);
     }
     remove("/sdcard/clockworkmod/.recoverycheckpoint");
     if (i == 0) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         ui_print("Timed out waiting for SD card... continuing anyways.");
-#else
+else
         ui_print("等待 SD 卡超时... 仍然继续。");
-#endif
+
     }
 
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
     ui_print("Verifying SD Card marker...\n");
-#else
+else
     ui_print("正在检查 SD 卡生成器...\n");
-#endif
+
     struct stat st;
     if (stat("/sdcard/clockworkmod/.salted_hash", &st) != 0) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         ui_print("SD Card marker not found...\n");
-#else
+else
         ui_print("未找到 SD 卡生成器...\n");
-#endif
+
         if (volume_for_path("/emmc") != NULL) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
             ui_print("Checking Internal SD Card marker...\n");
-#else
+else
             ui_print("正在检查内置 SD 卡生成器...\n");
-#endif
+
             ensure_path_unmounted(primary_path);
             if (ensure_path_mounted_at_mount_point("/emmc", primary_path) != 0) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
                 ui_print("Internal SD Card marker not found... continuing anyways.\n");
-#else
+else
                 ui_print("未找到内置 SD 卡生成器... 仍然继续。\n");
-#endif
+
                 // unmount everything, and remount as normal
                 ensure_path_unmounted("/emmc");
                 ensure_path_unmounted(primary_path);
@@ -501,11 +501,11 @@ int run_and_remove_extendedcommand()
     int ret;
 #ifdef I_AM_KOUSH
     if (0 != (ret = before_run_script(tmp))) {
-#ifndef USE_CHINESE_FONT
+if ( langurage== 1 )
         ui_print("Error processing ROM Manager script. Please verify that you are performing the backup, restore, or ROM installation from ROM Manager v4.4.0.0 or higher.\n");
-#else
+else
         ui_print("处理 ROM Manager 脚本时出错。请检查你要执行的备份、还原或是刷机操作是使用 ROM Manager v4.4.0.0 或更高版本进行的。\n");
-#endif
+
         return ret;
     }
 #endif
