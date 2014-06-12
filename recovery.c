@@ -41,8 +41,6 @@
 #include "roots.h"
 #include "recovery_ui.h"
 
-#include "voldclient/voldclient.h"
-
 #include "adb_install.h"
 #include "minadbd/adb.h"
 
@@ -1211,6 +1209,11 @@ static struct vold_callbacks v_callbacks = {
     .disk_removed = handle_volume_hotswap,
 };
 
+void vold_init() {
+    vold_client_start(&v_callbacks, 0);
+    vold_set_automount(1);
+}
+
 int
 main(int argc, char **argv) {
     if (argc == 2 && strcmp(argv[1], "adbd") == 0) {
@@ -1291,8 +1294,7 @@ if ( language== 1 ) {
 
     load_volume_table();
     process_volumes();
-    vold_client_start(&v_callbacks, 0);
-    vold_set_automount(1);
+    vold_init();
     setup_legacy_storage_paths();
 if ( language== 1 )
     LOGI("Processing arguments.\n");
