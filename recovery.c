@@ -632,9 +632,12 @@ prepend_title(const char** headers) {
 
                       "",
                       NULL };
-if ( langurage== 0 )
+if ( langurage== 0 ) {
 	title[1] = EXPAND(RECOVERY_PRODUCT_MODEL)" 专用版";
-else title[1] = "Only for "EXPAND(RECOVERY_PRODUCT_MODEL;
+	}
+else {
+	title[1] = "Only for "EXPAND(RECOVERY_PRODUCT_MODEL);
+}
     // count the number of lines in our title, plus the
     // caller-provided headers.
     int count = 0;

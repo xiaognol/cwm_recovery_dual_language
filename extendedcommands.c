@@ -209,9 +209,11 @@ int show_install_update_menu() {
 
 
     static const char* headers[] = { "Install update from zip file", "", NULL };
-if ( langurage== 0 )
+if ( langurage== 0 ) {
     headers[0] = "刷入 zip 刷机包";
-else headers[0] = "Install update from zip file";
+}else{ 
+	headers[0] = "Install update from zip file"; 
+	}
 
 
     // FIXED_TOP_INSTALL_ZIP_MENUS
@@ -1058,7 +1060,7 @@ if ( langurage== 0 ) {
     confirm_format[0] = "确认格式化？";
     confirm[0] = "是 - 格式化";
 } else {
-{
+
     confirm_format[0] = "Confirm format?";
     confirm[0] = "Yes - Format";
 }
