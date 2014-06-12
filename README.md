@@ -14,7 +14,5 @@ BOARD_USE_CUSTOM_RECOVERY_FONT := \"fontcn28_15x40.h\"
 
 ZJL@安智ATX-C团队，安智ATX新月
 
-代码中 language失误写成了 langurage  不要在意细节。。。
-
 
 
