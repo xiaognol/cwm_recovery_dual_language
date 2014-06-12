@@ -54,7 +54,7 @@ handle_firmware_update(char* type, char* filename, ZipArchive* zip) {
     if (strncmp(filename, "PACKAGE:", 8) == 0) {
         entry = mzFindZipEntry(zip, filename+8);
         if (entry == NULL) {
-if ( langurage== 1 )
+if ( language== 1 )
             LOGE("Failed to find \"%s\" in package", filename+8);
 else
             LOGE("无法在刷机包中找到 \"%s\"", filename+8);
@@ -65,7 +65,7 @@ else
     } else {
         struct stat st_data;
         if (stat(filename, &st_data) < 0) {
-if ( langurage== 1 )
+if ( language== 1 )
             LOGE("Error stat'ing %s: %s\n", filename, strerror(errno));
 else
             LOGE("统计时出错 %s: %s\n", filename, strerror(errno));
@@ -75,7 +75,7 @@ else
         data_size = st_data.st_size;
     }
 
-if ( langurage== 1 )
+if ( language== 1 )
     LOGI("type is %s; size is %d; file is %s\n",type, data_size, filename);
 else
     LOGI("类型为 %s; 大小为 %d; 文件为 %s\n",
@@ -84,7 +84,7 @@ else
 
     char* data = malloc(data_size);
     if (data == NULL) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGI("Can't allocate %d bytes for firmware data\n", data_size);
 else
         LOGI("无法为固件数据分配 %d 字节的空间\n", data_size);
@@ -94,7 +94,7 @@ else
 
     if (entry) {
         if (mzReadZipEntry(zip, entry, data, data_size) == false) {
-if ( langurage== 1 )
+if ( language== 1 )
             LOGE("Failed to read \"%s\" from package", filename+8);
 else
             LOGE("无法读取刷机包中的 \"%s\"", filename+8);
@@ -104,7 +104,7 @@ else
     } else {
         FILE* f = fopen(filename, "rb");
         if (f == NULL) {
-if ( langurage== 1 )
+if ( language== 1 )
             LOGE("Failed to open %s: %s\n", filename, strerror(errno));
 else
             LOGE("无法打开 %s: %s\n", filename, strerror(errno));
@@ -112,7 +112,7 @@ else
             return INSTALL_ERROR;
         }
         if (fread(data, 1, data_size, f) != data_size) {
-if ( langurage== 1 )
+if ( language== 1 )
             LOGE("Failed to read firmware data: %s\n", strerror(errno));
 else
             LOGE("无法读取固件数据: %s\n", strerror(errno));
@@ -123,7 +123,7 @@ else
     }
 
     if (remember_firmware_update(type, data, data_size)) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Can't store %s image\n", type);
 else
         LOGE("无法保存 %s 镜像\n", type);
@@ -157,7 +157,7 @@ static int set_legacy_props() {
     }
 
     if (rename(DEV_PROP_PATH, DEV_PROP_BACKUP_PATH) != 0) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Could not rename properties path: %s\n", DEV_PROP_PATH);
 else
         LOGE("无法重命名属性设置文件路径：%s\n", DEV_PROP_PATH);
@@ -172,7 +172,7 @@ else
 
 static int unset_legacy_props() {
     if (rename(DEV_PROP_BACKUP_PATH, DEV_PROP_PATH) != 0) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Could not rename properties path: %s\n", DEV_PROP_BACKUP_PATH);
 else
         LOGE("无法重命名属性设置文件路径：%s\n", DEV_PROP_BACKUP_PATH);
@@ -200,7 +200,7 @@ try_update_binary(const char *path, ZipArchive *zip) {
         const ZipEntry* update_script_entry =
                 mzFindZipEntry(zip, ASSUMED_UPDATE_SCRIPT_NAME);
         if (update_script_entry != NULL) {
-if ( langurage== 1 ) {
+if ( language== 1 ) {
             ui_print("Amend scripting (update-script) is no longer supported.\n");
             ui_print("Amend scripting was deprecated by Google in Android 1.5.\n");
             ui_print("It was necessary to remove it when upgrading to the ClockworkMod 3.0 Gingerbread based recovery.\n");
@@ -223,7 +223,7 @@ if ( langurage== 1 ) {
     int fd = creat(binary, 0755);
     if (fd < 0) {
         mzCloseZipArchive(zip);
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Can't make %s\n", binary);
 else
         LOGE("无法创建 %s\n", binary);
@@ -234,7 +234,7 @@ else
     close(fd);
 
     if (!ok) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Can't copy %s\n", ASSUMED_UPDATE_BINARY_NAME);
 else
         LOGE("无法复制 %s\n", ASSUMED_UPDATE_BINARY_NAME);
@@ -262,7 +262,7 @@ else
     bool foundsetmeta = false;
 
     if (updaterfile == NULL) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Can't find %s for validation\n", ASSUMED_UPDATE_BINARY_NAME);
 else
         LOGE("无法找到 %s 以进行校验\n", ASSUMED_UPDATE_BINARY_NAME);
@@ -295,7 +295,7 @@ else
 
     /* Set legacy properties */
     if (foundsetperm && !foundsetmeta) {
-if ( langurage== 1 ) {
+if ( language== 1 ) {
         LOGI("Using legacy property environment for update-binary...\n");
         if (set_legacy_props() != 0) {
             LOGE("Legacy property environment did not init successfully. Properties may not be detected.\n");
@@ -397,7 +397,7 @@ else {
 
             if (type != NULL && filename != NULL) {
                 if (firmware_type != NULL) {
-if ( langurage== 1 )
+if ( language== 1 )
                     LOGE("ignoring attempt to do multiple firmware updates");
 else
                     LOGE("忽略多个固件更新的操作");
@@ -415,7 +415,7 @@ else
                 ui_print("\n");
             }
         } else {
-if ( langurage== 1 )
+if ( language== 1 )
             LOGE("unknown command [%s]\n", command);
 else
             LOGE("未知命令 [%s]\n", command);
@@ -429,7 +429,7 @@ else
 
     /* Unset legacy properties */
     if (legacy_props_path_modified) {
-if ( langurage== 1 ) {
+if ( language== 1 ) {
         if (unset_legacy_props() != 0) {
 
             LOGE("Legacy property environment did not disable successfully. Legacy properties may still be in use.\n");
@@ -447,7 +447,7 @@ if ( langurage== 1 ) {
     }
 
     if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Error in %s\n(Status %d)\n", path, WEXITSTATUS(status));
 else
         LOGE("%s 中出错\n(状态 %d)\n", path, WEXITSTATUS(status));
@@ -469,7 +469,7 @@ static int
 really_install_package(const char *path)
 {
     ui_set_background(BACKGROUND_ICON_INSTALLING);
-if ( langurage== 1 )
+if ( language== 1 )
     ui_print("Finding update package...\n");
 else
     ui_print("正在查找刷机包...\n");
@@ -496,14 +496,14 @@ else
         }
     }
 
-if ( langurage== 1 )
+if ( language== 1 )
     LOGI("Update location: %s\n", path);
 else
     LOGI("刷机包位置: %s\n", path);
 
 
     if (ensure_path_mounted(path) != 0) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Can't mount %s\n", path);
 else
         LOGE("无法挂载 %s\n", path);
@@ -511,7 +511,7 @@ else
         return INSTALL_CORRUPT;
     }
 
-if ( langurage== 1 )
+if ( language== 1 )
     ui_print("Opening update package...\n");
 else
     ui_print("正在打开刷机包...\n");
@@ -523,21 +523,21 @@ else
         int numKeys;
         Certificate* loadedKeys = load_keys(PUBLIC_KEYS_FILE, &numKeys);
         if (loadedKeys == NULL) {
-if ( langurage== 1 )
+if ( language== 1 )
             LOGE("Failed to load keys\n");
 else
             LOGE("无法载入密钥\n");
 
             return INSTALL_CORRUPT;
         }
-if ( langurage== 1 )
+if ( language== 1 )
         LOGI("%d key(s) loaded from %s\n", numKeys, PUBLIC_KEYS_FILE);
 else
         LOGI("%d 个密钥已从 %s 中载入\n", numKeys, PUBLIC_KEYS_FILE);
 
 
         // Give verification half the progress bar...
-if ( langurage== 1 )
+if ( language== 1 )
         ui_print("Verifying update package...\n");
 else
         ui_print("正在校验刷机包...\n");
@@ -548,19 +548,19 @@ else
 
         err = verify_file(path, loadedKeys, numKeys);
         free(loadedKeys);
-if ( langurage== 1 )
+if ( language== 1 )
         LOGI("verify_file returned %d\n", err);
 else
         LOGI("verify_file 返回 %d\n", err);
 
         if (err != VERIFY_SUCCESS) {
-if ( langurage== 1 )
+if ( language== 1 )
             LOGE("signature verification failed\n");
 else
             LOGE("签名校验失败\n");
 
             ui_show_text(1);
-if ( langurage== 1 ) {
+if ( language== 1 ) {
             if (!confirm_selection("Install Untrusted Package?", "Yes - Install untrusted zip"))
 		return INSTALL_CORRUPT;
 }else{
@@ -576,7 +576,7 @@ if ( langurage== 1 ) {
     ZipArchive zip;
     err = mzOpenZipArchive(path, &zip);
     if (err != 0) {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("Can't open %s\n(%s)\n", path, err != -1 ? strerror(err) : "bad");
 else
         LOGE("无法打开 %s\n(%s)\n", path, err != -1 ? strerror(err) : "已损坏");
@@ -586,7 +586,7 @@ else
 
     /* Verify and install the contents of the package.
      */
-if ( langurage== 1 )
+if ( language== 1 )
     ui_print("Installing update...\n");
 else
     ui_print("正在刷入刷机包...\n");
@@ -602,7 +602,7 @@ install_package(const char* path)
         fputs(path, install_log);
         fputc('\n', install_log);
     } else {
-if ( langurage== 1 )
+if ( language== 1 )
         LOGE("failed to open last_install: %s\n", strerror(errno));
 else
         LOGE("无法打开 last_install: %s\n", strerror(errno));

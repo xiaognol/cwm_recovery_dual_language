@@ -89,7 +89,7 @@ Value* UIPrintFn(const char* name, State* state, int argc, Expr* argv[]) {
 
 Value* RunProgramFn(const char* name, State* state, int argc, Expr* argv[]) {
     if (argc < 1) {
-if ( langurage== 1 )
+if ( language== 1 )
         return ErrorAbort(state, "%s() expects at least 1 arg", name);
 else
         return ErrorAbort(state, "%s() 需要最少 1 个参数", name);
@@ -140,7 +140,7 @@ else
 Value* FormatFn(const char* name, State* state, int argc, Expr* argv[]) {
     char* result = NULL;
     if (argc != 1) {
-if ( langurage== 1 )
+if ( language== 1 )
         return ErrorAbort(state, "%s() expects 1 arg, got %d", name, argc);
 else
         return ErrorAbort(state, "%s() 期望的参数为 1 个，但是调用时却使用了 %d 个", name, argc);
@@ -152,7 +152,7 @@ else
         return NULL;
     }
     
-if ( langurage== 1 )
+if ( language== 1 )
     ui_print("Formatting %s...\n", path);
 else
     ui_print("正在格式化 %s...\n", path);
@@ -163,7 +163,7 @@ else
     }
     
     if (strcmp(path, "/data") == 0 && has_datadata()) {
-if ( langurage== 1 )
+if ( language== 1 )
         ui_print("Formatting /datadata...\n");
 else
         ui_print("正在格式化 /datadata...\n");
@@ -185,7 +185,7 @@ done:
 Value* BackupFn(const char* name, State* state, int argc, Expr* argv[]) {
     char* result = NULL;
     if (argc != 1) {
-if ( langurage== 1 )
+if ( language== 1 )
         return ErrorAbort(state, "%s() expects 1 args, got %d", name, argc);
 else
         return ErrorAbort(state, "%s() 期望的参数为 1 个，但是调用时却使用了 %d 个", name, argc);
@@ -204,7 +204,7 @@ else
 
 Value* RestoreFn(const char* name, State* state, int argc, Expr* argv[]) {
     if (argc < 1) {
-if ( langurage== 1 )
+if ( language== 1 )
         return ErrorAbort(state, "%s() expects at least 1 arg", name);
 else
         return ErrorAbort(state, "%s() 需要最少 1 个参数", name);
@@ -262,7 +262,7 @@ else
 Value* InstallZipFn(const char* name, State* state, int argc, Expr* argv[]) {
     char* result = NULL;
     if (argc != 1) {
-if ( langurage== 1 )
+if ( language== 1 )
         return ErrorAbort(state, "%s() expects 1 args, got %d", name, argc);
 else
         return ErrorAbort(state, "%s() 期望的参数为 1 个，但是调用时却使用了 %d 个", name, argc);
@@ -282,7 +282,7 @@ else
 Value* MountFn(const char* name, State* state, int argc, Expr* argv[]) {
     char* result = NULL;
     if (argc != 1) {
-if ( langurage== 1 )
+if ( language== 1 )
         return ErrorAbort(state, "%s() expects 1 args, got %d", name, argc);
 else
         return ErrorAbort(state, "%s() 期望的参数为 1 个，但是调用时却使用了 %d 个", name, argc);
@@ -418,7 +418,7 @@ int run_script(char* filename)
     // supposedly not necessary, but let's be safe.
     script_data[script_len] = '\0';
     fclose(file);
-if ( langurage== 1 )
+if ( language== 1 )
     LOGI("Running script:\n");
 else
     LOGI("执行脚本:\n");
@@ -439,13 +439,13 @@ int run_and_remove_extendedcommand()
     remove(EXTENDEDCOMMAND_SCRIPT);
     int i = 0;
     for (i = 20; i > 0; i--) {
-if ( langurage== 1 )
+if ( language== 1 )
         ui_print("Waiting for SD Card to mount (%ds)\n", i);
 else
         ui_print("等待 SD 卡挂载 (%ds)\n", i);
 
         if (ensure_path_mounted(primary_path) == 0) {
-if ( langurage== 1 )
+if ( language== 1 )
             ui_print("SD Card mounted...\n");
 else
             ui_print("已挂载 SD 卡...\n");
@@ -456,34 +456,34 @@ else
     }
     remove("/sdcard/clockworkmod/.recoverycheckpoint");
     if (i == 0) {
-if ( langurage== 1 )
+if ( language== 1 )
         ui_print("Timed out waiting for SD card... continuing anyways.");
 else
         ui_print("等待 SD 卡超时... 仍然继续。");
 
     }
 
-if ( langurage== 1 )
+if ( language== 1 )
     ui_print("Verifying SD Card marker...\n");
 else
     ui_print("正在检查 SD 卡生成器...\n");
 
     struct stat st;
     if (stat("/sdcard/clockworkmod/.salted_hash", &st) != 0) {
-if ( langurage== 1 )
+if ( language== 1 )
         ui_print("SD Card marker not found...\n");
 else
         ui_print("未找到 SD 卡生成器...\n");
 
         if (volume_for_path("/emmc") != NULL) {
-if ( langurage== 1 )
+if ( language== 1 )
             ui_print("Checking Internal SD Card marker...\n");
 else
             ui_print("正在检查内置 SD 卡生成器...\n");
 
             ensure_path_unmounted(primary_path);
             if (ensure_path_mounted_at_mount_point("/emmc", primary_path) != 0) {
-if ( langurage== 1 )
+if ( language== 1 )
                 ui_print("Internal SD Card marker not found... continuing anyways.\n");
 else
                 ui_print("未找到内置 SD 卡生成器... 仍然继续。\n");
@@ -501,7 +501,7 @@ else
     int ret;
 #ifdef I_AM_KOUSH
     if (0 != (ret = before_run_script(tmp))) {
-if ( langurage== 1 )
+if ( language== 1 )
         ui_print("Error processing ROM Manager script. Please verify that you are performing the backup, restore, or ROM installation from ROM Manager v4.4.0.0 or higher.\n");
 else
         ui_print("处理 ROM Manager 脚本时出错。请检查你要执行的备份、还原或是刷机操作是使用 ROM Manager v4.4.0.0 或更高版本进行的。\n");

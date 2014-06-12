@@ -20,13 +20,13 @@
 #include "common.h"
 #include "extendedcommands.h"
 #include "cutils/properties.h"
-//char langurage[];
-//int ret = property_get("sys.langurage.chinese", langurage, NULL);
+//char language[];
+//int ret = property_get("sys.language.chinese", language, NULL);
 char* MENU_HEADERS[] = { NULL };
 /*extern void set_item_menu() {
 
 
-if ( langurage== 1 ) {*/
+if ( language== 1 ) {*/
 char* MENU_ITEMS[] = { "reboot system now",
                        "install zip",
                        "wipe data/factory reset",
@@ -34,7 +34,7 @@ char* MENU_ITEMS[] = { "reboot system now",
                        "backup and restore",
                        "mounts and storage",
                        "advanced",
-		       "select langurage",
+		       "select language",
 			NULL };
 
 /*} else {
