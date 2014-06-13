@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "loki.h"
-
+#include "../recovery_ui.h"
 #define BOOT_PATTERN1 "\x4f\xf4\x70\x40\xb3\x49\x2d\xe9"	/* Samsung GS4 */
 #define BOOT_PATTERN2 "\x2d\xe9\xf0\x4f\xad\xf5\x82\x5d"	/* LG */
 #define BOOT_PATTERN3 "\x2d\xe9\xf0\x4f\x4f\xf4\x70\x40"	/* LG */
@@ -20,30 +20,30 @@ int loki_find(const char* aboot_image)
 
 	aboot_fd = open(aboot_image, O_RDONLY);
 	if (aboot_fd < 0) {
-#ifndef USE_CHINESE_FONT
+if ( language== 1 )
 		printf("[-] Failed to open %s for reading.\n", aboot_image);
-#else
+else
 		printf("[-] 无法打开 %s 以进行读取。\n", aboot_image);
-#endif
+
 		return 1;
 	}
 
 	if (fstat(aboot_fd, &st)) {
-#ifndef USE_CHINESE_FONT
+if ( language== 1 )
 		printf("[-] fstat() failed.\n");
-#else
+else
 		printf("[-] fstat() 失败。\n");
-#endif
+
 		return 1;
 	}
 
 	aboot = mmap(0, (st.st_size + 0xfff) & ~0xfff, PROT_READ, MAP_PRIVATE, aboot_fd, 0);
 	if (aboot == MAP_FAILED) {
-#ifndef USE_CHINESE_FONT
+if ( language== 1 )
 		printf("[-] Failed to mmap aboot.\n");
-#else
+else
 		printf("[-] 无法 mmap aboot。\n");
-#endif
+
 		return 1;
 	}
 
@@ -85,19 +85,19 @@ int loki_find(const char* aboot_image)
 	}
 
 	if (!check_sigs) {
-#ifndef USE_CHINESE_FONT
+if ( language== 1 )
 		printf("[-] Could not find signature checking function.\n");
-#else
+else
 		printf("[-] 无法找到签名检查函数。\n");
-#endif
+
 		return 1;
 	}
 
-#ifndef USE_CHINESE_FONT
+if ( language== 1 )
 	printf("[+] Signature check function: %.08lx\n", check_sigs);
-#else
+else
 	printf("[+] 签名检查函数：%.08lx\n", check_sigs);
-#endif
+
 
 	boot_mmc = 0;
 
@@ -114,11 +114,11 @@ int loki_find(const char* aboot_image)
     }
 
 	if (!boot_mmc) {
-#ifndef USE_CHINESE_FONT
+if ( language== 1 )
 		printf("[-] Could not find boot_linux_from_mmc.\n");
-#else
+else
 		printf("[-] 无法找到 boot_linux_from_mmc.\n");
-#endif
+
 		return 1;
 	}
 
