@@ -630,8 +630,11 @@ if ( language== 0 ) {
     headers[1] = "离开当前菜单即会停";
     headers[2] = "用 U 盘模式。";
 	}
-
-                                     
+else {
+    headers[0] = "USB Mass Storage device";
+    headers[1] = "Leaving this menu unmounts";
+    headers[2] = "your SD card from your PC.";
+	}                               
 
 
     static char* list[] = { "Unmount", NULL };
@@ -669,9 +672,11 @@ int confirm_selection(const char* title, const char* confirm) {
     char* confirm_str = strdup(confirm);
 
     const char* confirm_headers[] = { title, "  THIS CAN NOT BE UNDONE.", "", NULL };
-if ( language== 0 )
+if ( language== 0 ) {
     confirm_headers[1] = "  本操作是不可逆的。";
-
+} else { 
+    confirm_headers[1] = "  THIS CAN NOT BE UNDONE.";
+}
 	int old_val = ui_is_showing_back_button();
     ui_set_showing_back_button(0);
 
@@ -705,6 +710,18 @@ if ( language== 0 ) {
         items[8] =  "否";
         items[9] = "否";
         items[10] = "否";
+} else {
+        items[0] = "No";
+        items[1] = "No";
+        items[2] = "No";
+        items[3] = "No";
+        items[4] = "No";
+        items[5] = "No";
+        items[6] = "No";
+        items[7] = confirm_str; // Yes, [7]
+        items[8] = "No";
+        items[9] = "No";
+        items[10] = "No";
 }
         int chosen_item = get_menu_selection(confirm_headers, items, 0, 0);
         ret = (chosen_item == 7);
@@ -713,9 +730,11 @@ if ( language== 0 ) {
         char* items[] = { "No",
 		confirm_str, // Yes, [1]
                           NULL };
-if ( language== 0 )
+if ( language== 0 ) {
         items[0] = "否";
-
+} else {
+        items[0] = "No";
+}
                           
         int chosen_item = get_menu_selection(confirm_headers, items, 0, 0);
         ret = (chosen_item == 1);
@@ -1283,7 +1302,12 @@ if ( language== 0 ) {
     advancedheaders[2] = "首先选择一个要还原的镜";
     advancedheaders[3] = "像。接下来的菜单会有更";
     advancedheaders[4] = "多的选项以供选择。";
-}
+} else {
+    advancedheaders[0] = "Choose an image to restore";
+    advancedheaders[2] = "Choose an image to restore";
+    advancedheaders[3] = "first. The next menu will";
+    advancedheaders[4] = "show you more options.";
+} 
                                              
 
     char tmp[PATH_MAX];
@@ -1314,6 +1338,14 @@ if ( language== 0 ) {
     list[4] = "还原 cache";
     list[5] = "还原 sd-ext";
     list[6] = "还原 wimax";
+} else {
+    list[0] = "Restore boot";
+    list[1] = "Restore system";
+    list[2] = "Restore preload";
+    list[3] = "Restore data";
+    list[4] = "Restore cache";
+    list[5] = "Restore sd-ext";
+    list[6] = "Restore wimax";
 }
                             
 
@@ -1323,21 +1355,23 @@ if ( language== 0 ) {
     }
 
 
-    static char* confirm_restore = "Confirm restore?";
-if ( language== 0 )
-    confirm_restore = "确认还原？";
-
+    static char* confirm_restore[] = "Confirm restore?";
+if ( language== 0 ) {
+    confirm_restore[0] = "确认还原？";
+} else {
+    confirm_restore[0] = "Confirm restore?";
+}
 
     int chosen_item = get_menu_selection(headers, list, 0, 0);
     switch (chosen_item) {
         case 0: {
 if ( language== 1 ) {
-            if (confirm_selection(confirm_restore, "Yes - Restore boot"))
+            if (confirm_selection(confirm_restore[0], "Yes - Restore boot"))
 		nandroid_restore(file, 1, 0, 0, 0, 0, 0, 0);
 
         }
 else {
-            if (confirm_selection(confirm_restore, "是 - 还原 boot"))
+            if (confirm_selection(confirm_restore[0], "是 - 还原 boot"))
 
                 nandroid_restore(file, 1, 0, 0, 0, 0, 0, 0);
             
@@ -1346,12 +1380,12 @@ else {
 	}
         case 1: {
 if ( language== 1 ) {
-            if (confirm_selection(confirm_restore, "Yes - Restore system"))
+            if (confirm_selection(confirm_restore[0], "Yes - Restore system"))
 		nandroid_restore(file, 0, 1, 0, 0, 0, 0, 0);
             
         }
 else {
-            if (confirm_selection(confirm_restore, "是 - 还原 system"))
+            if (confirm_selection(confirm_restore[0], "是 - 还原 system"))
 
                 nandroid_restore(file, 0, 1, 0, 0, 0, 0, 0);
             
@@ -1360,12 +1394,12 @@ else {
 	}
         case 2: {
 if ( language== 1 ) {
-            if (confirm_selection(confirm_restore, "Yes - Restore preload"))
+            if (confirm_selection(confirm_restore[0], "Yes - Restore preload"))
 		nandroid_restore(file, 0, 0, 1, 0, 0, 0, 0);
            
         }
 else {
-            if (confirm_selection(confirm_restore, "是 - 还原 preload"))
+            if (confirm_selection(confirm_restore[0], "是 - 还原 preload"))
 
                 nandroid_restore(file, 0, 0, 1, 0, 0, 0, 0);
         
@@ -1374,12 +1408,12 @@ else {
 	}
         case 3: {
 if ( language== 1 ) {
-            if (confirm_selection(confirm_restore, "Yes - Restore data"))
+            if (confirm_selection(confirm_restore[0], "Yes - Restore data"))
 		nandroid_restore(file, 0, 0, 0, 1, 0, 0, 0);
             
         }
 else {
-            if (confirm_selection(confirm_restore, "是 - 还原 data"))
+            if (confirm_selection(confirm_restore[0], "是 - 还原 data"))
 
                 nandroid_restore(file, 0, 0, 0, 1, 0, 0, 0);
             
@@ -1388,12 +1422,12 @@ else {
 	}
         case 4: {
 if ( language== 1 ) {
-            if (confirm_selection(confirm_restore, "Yes - Restore cache"))
+            if (confirm_selection(confirm_restore[0], "Yes - Restore cache"))
 		nandroid_restore(file, 0, 0, 0, 0, 1, 0, 0);
             
         }
 else {
-            if (confirm_selection(confirm_restore, "是 - 还原 cache"))
+            if (confirm_selection(confirm_restore[0], "是 - 还原 cache"))
 
                 nandroid_restore(file, 0, 0, 0, 0, 1, 0, 0);
             
@@ -1402,12 +1436,12 @@ else {
 	}
         case 5: {
 if ( language== 1 ) {
-            if (confirm_selection(confirm_restore, "Yes - Restore sd-ext"))
+            if (confirm_selection(confirm_restore[0], "Yes - Restore sd-ext"))
 		nandroid_restore(file, 0, 0, 0, 0, 0, 1, 0);
            
         }
 else {
-            if (confirm_selection(confirm_restore, "是 - 还原 sd-ext"))
+            if (confirm_selection(confirm_restore[0], "是 - 还原 sd-ext"))
 
                 nandroid_restore(file, 0, 0, 0, 0, 0, 1, 0);
             
@@ -1416,12 +1450,12 @@ else {
 	}
         case 6: {
 if ( language== 1 ) {
-            if (confirm_selection(confirm_restore, "Yes - Restore wimax"))
+            if (confirm_selection(confirm_restore[0], "Yes - Restore wimax"))
 		nandroid_restore(file, 0, 0, 0, 0, 0, 0, 1);
           
         }
 else {
-            if (confirm_selection(confirm_restore, "是 - 还原 wimax"))
+            if (confirm_selection(confirm_restore[0], "是 - 还原 wimax"))
 
                 nandroid_restore(file, 0, 0, 0, 0, 0, 0, 1);
             
@@ -1456,8 +1490,11 @@ static void run_dedupe_gc() {
 static void choose_default_backup_format() {
 
     static const char* headers[] = { "Default Backup Format", "", NULL };
-if ( language== 0 ) headers[0] = "默认备份格式";
-
+if ( language== 0 ) { 
+	headers[0] = "默认备份格式";
+} else { 
+	headers[0] = "Default Backup Format";
+}
 
     int fmt = nandroid_get_default_backup_format();
 
@@ -1470,6 +1507,9 @@ if ( language== 0 ) headers[0] = "默认备份格式";
 if ( language== 0 ) { 
 	list_tar_default[0] = "tar (默认)";
         list_tar_default[1] = "增量备份";
+} else { 
+	list_tar_default[0] = "tar (default)";
+        list_tar_default[1] = "dup";
 }
     char* list_dup_default[] = { "tar",
 
@@ -1478,7 +1518,11 @@ if ( language== 0 ) {
 
                                  "tar + gzip",
                                  NULL };
-if ( language== 0 ) list_dup_default[2] = "增量备份 (默认)";
+if ( language== 0 ) { 
+	list_dup_default[2] = "增量备份 (默认)";
+} else { 
+	list_dup_default[2] = "dup (default)";
+}
     char* list_tgz_default[] = { "tar",
 
                                  "dup",
@@ -1488,6 +1532,9 @@ if ( language== 0 ) list_dup_default[2] = "增量备份 (默认)";
 if ( language== 0 ) {
 	list_tgz_default[1] = "增量备份";
 	list_tgz_default[2] = "tar + gzip (默认)";
+} else {
+	list_tgz_default[1] = "dup";
+	list_tgz_default[2] = "tar + gzip (default)";
 }
     if (fmt == NANDROID_BACKUP_FORMAT_DUP) {
         list = list_dup_default;
@@ -1579,7 +1626,11 @@ int show_nandroid_menu() {
 
 
     static const char* headers[] = { "Backup and Restore", "", NULL };
-if ( language== 0 ) headers[0] = "备份和还原";
+if ( language== 0 ) { 
+	headers[0] = "备份和还原";
+} else { 
+	headers[0] = "Backup and Restore";
+}
 
 
     // (MAX_NUM_MANAGED_VOLUMES + 1) for primary_path (/sdcard)
@@ -1706,6 +1757,10 @@ if ( language== 0 ) {
     headers[0] = "格式化设备:";
 
     list[0] = "默认格式";
+} else {
+    headers[0] = "Format device:";
+
+    list[0] = "default";
 }
                            
 
@@ -1822,6 +1877,10 @@ if ( language== 0 ) {
     ext_headers[0] = "Ext 大小";
     swap_headers[0] = "Swap 大小";
     fstype_headers[0] = "分区类型";
+} else {
+    ext_headers[0] = "Ext Size";
+    swap_headers[0] = "Swap Size";
+    fstype_headers[0] = "Partition Type";
 }
 
     int ext_size = get_menu_selection(ext_headers, ext_sizes, 0, 0);
@@ -1951,7 +2010,11 @@ int show_advanced_menu() {
 
 
     static const char* headers[] = { "Advanced Menu", "", NULL };
-if ( language== 0 ) headers[0] = "高级功能菜单";
+if ( language== 0 ) { 
+	headers[0] = "高级功能菜单";
+} else { 
+	headers[0] = "Advanced Menu";
+}
 
 
     memset(list, 0, MAX_NUM_MANAGED_VOLUMES + FIXED_ADVANCED_ENTRIES + 1);
@@ -2007,7 +2070,11 @@ else
 
 
     char list_prefix[] = "partition ";
-if ( language== 0 ) list_prefix[0] = "分区 ";
+if ( language== 0 ) { 
+	list_prefix[0] = "分区 ";
+} else { 
+	list_prefix[0] = "partition ";
+} 
 
     if (can_partition(primary_path)) {
         sprintf(buf, "%s%s", list_prefix, primary_path);

@@ -766,7 +766,11 @@ update_directory(const char* path, const char* unmount_when_done) {
 				   path,
                                    "",
                                    NULL };
-if ( language== 0 ) MENU_HEADERS[0] = "选择要刷入的刷机包:";
+if ( language== 0 ) { 
+	MENU_HEADERS[0] = "选择要刷入的刷机包:";
+} else { 
+	MENU_HEADERS[0] = "Choose a package to install:";
+}
     DIR* d;
     struct dirent* de;
     d = opendir(path);

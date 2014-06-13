@@ -154,7 +154,11 @@ else
 
 
     static char* list[] = { "Cancel sideload", NULL };
-if ( language== 0 )  list[0] = "取消 sideload";
+if ( language== 0 )  { 
+	list[0] = "取消 sideload";
+} else { 
+	list[0] = "Cancel sideload";
+}
 
     
     get_menu_selection(headers, list, 0, 0);
