@@ -34,7 +34,7 @@ char* MENU_ITEMS[] = { "reboot system now",
                        "backup and restore",
                        "mounts and storage",
                        "advanced",
-		       "select language",
+		       "选择语言",
 			NULL };
 
 /*} else {
