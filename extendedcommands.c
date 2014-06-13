@@ -482,7 +482,7 @@ else
 
     static const char* headers[] = { "Choose a zip to apply", "", NULL };
 if ( language== 0 )
-    headers[0] = "选择要刷入的刷机包以进行刷机";
+    headers[0] = "选择要刷入的刷机包";
 
 
     char* file = choose_file_menu(mount_point, ".zip", headers);
@@ -495,13 +495,16 @@ else
     sprintf(confirm, "是 - 刷入 %s", basename(file));
 
 
-if ( language== 1 )
+if ( language== 1 ) {
     if (confirm_selection("Confirm install?", confirm)) {
 
 	install_zip(file);
         write_last_install_path(dirname(file));
     }
-else
+	free(file);
+
+}
+else {
     if (confirm_selection("确认刷入？", confirm)) {
 
         install_zip(file);
@@ -509,6 +512,7 @@ else
     }
 
     free(file);
+	}
 }
 
 void show_nandroid_restore_menu(const char* path) {
@@ -533,16 +537,20 @@ if ( language== 0 )
     if (file == NULL)
         return;
 
-if ( language== 1 )
+if ( language== 1 ) {
     if (confirm_selection("Confirm restore?", "Yes - Restore"))
 
     nandroid_restore(file, 1, 1, 1, 1, 1, 1, 0);
-else
+
+	free(file);
+}
+else {
     if (confirm_selection("确认还原？", "是 - 还原"))
 
         nandroid_restore(file, 1, 1, 1, 1, 1, 1, 0);
 
     free(file);
+	}
 }
 
 void show_nandroid_delete_menu(const char* path) {
@@ -567,13 +575,15 @@ if ( language== 0 )
     if (file == NULL)
         return;
 
-if ( language== 1 )
+if ( language== 1 ) {
     if (confirm_selection("Confirm delete?", "Yes - Delete")) {
 
 	sprintf(tmp, "rm -rf %s", file);
         __system(tmp);
-    }
-else
+    	}
+	free(file);
+  }
+else {
     if (confirm_selection("确认删除？", "是 - 删除")) {
 
         sprintf(tmp, "rm -rf %s", file);
@@ -581,6 +591,7 @@ else
     }
 
     free(file);
+	}
 }
 
 static int control_usb_storage(bool on) {
