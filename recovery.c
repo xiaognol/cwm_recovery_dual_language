@@ -982,6 +982,7 @@ MENU_ITEMS[5] = "mounts and storage";
 MENU_ITEMS[6] = "advanced";
 MENU_ITEMS[7] = "select language";
 MENU_ITEMS[8] = NULL;
+rootmenutitle[1] = "Only for "EXPAND(RECOVERY_PRODUCT_MODEL);
 ui_print("change language to english\n");
 } else {
 MENU_ITEMS[0] = "立即重启系统";
@@ -993,6 +994,7 @@ MENU_ITEMS[5] = "挂载及 U 盘模式";
 MENU_ITEMS[6] = "高级功能";
 MENU_ITEMS[7] = "选择语言";
 MENU_ITEMS[8] = NULL;
+rootmenutitle[1] = EXPAND(RECOVERY_PRODUCT_MODEL)" 专用版";
 ui_print("启用中文。\n");
 	}
 }
@@ -1000,10 +1002,10 @@ ui_print("启用中文。\n");
 static void headless_wait() {
     ui_show_text(0);
     set_item_menu();
-    const char** headers = prepend_title((const char**)MENU_HEADERS);
+    //const char** headers = prepend_title((const char**)MENU_HEADERS);
     for(;;) {
         finish_recovery(NULL);
-        get_menu_selection(headers, MENU_ITEMS, 0, 0);
+        get_menu_selection(rootmenutitle, MENU_ITEMS, 0, 0);
     }
 }
 
@@ -1012,8 +1014,14 @@ int ui_root_menu = 0;
 static void
 prompt_and_wait() {
 	chose_language_menu();
-    const char** headers = prepend_title((const char**)MENU_HEADERS);
+    //const char** headers = prepend_title((const char**)MENU_HEADERS);
 
+if ( language== 0 ) {
+	rootmenutitle[1] = EXPAND(RECOVERY_PRODUCT_MODEL)" 专用版";
+	}
+else {
+	rootmenutitle[1] = "Only for "EXPAND(RECOVERY_PRODUCT_MODEL);
+}
     for (;;) {
         finish_recovery(NULL);
         ui_reset_progress();
@@ -1021,7 +1029,7 @@ prompt_and_wait() {
         ui_root_menu = 1;
         // ui_menu_level is a legacy variable that i am keeping around to prevent build breakage.
         ui_menu_level = 0;
-        int chosen_item = get_menu_selection(headers, MENU_ITEMS, 0, 0);
+        int chosen_item = get_menu_selection(rootmenutitle, MENU_ITEMS, 0, 0);
         ui_menu_level = 1;
         ui_root_menu = 0;
 

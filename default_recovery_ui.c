@@ -50,6 +50,12 @@ char* MENU_ITEMS[] = { "立即重启系统",
                        NULL };
 	}
 }*/
+char* rootmenutitle[] = { EXPAND(RECOVERY_VERSION),
+
+                      "Only for "EXPAND(RECOVERY_PRODUCT_MODEL),
+
+                      "",
+                      NULL };
 void device_ui_init(UIParameters* ui_parameters) {
 }
 
