@@ -1355,7 +1355,7 @@ if ( language== 0 ) {
     }
 
 
-    static char* confirm_restore[] = "Confirm restore?";
+    static char* confirm_restore[] = {"Confirm restore?"};
 if ( language== 0 ) {
     confirm_restore[0] = "确认还原？";
 } else {
