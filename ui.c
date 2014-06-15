@@ -1144,12 +1144,6 @@ void ui_delete_line() {
     pthread_mutex_unlock(&gUpdateMutex);
 }
 
-void ui_increment_frame() {
-    if (!ui_has_initialized) return;
-    gInstallingFrame =
-        (gInstallingFrame + 1) % ui_parameters.installing_frames;
-}
-
 int get_batt_stats() {
     static int level = -1;
 
