@@ -62,9 +62,13 @@ static void ensure_directory(const char* dir) {
     __system(tmp);
 }
 
-static int print_and_error(const char* message) {
-    ui_print("%s\n", message);
-    return 1;
+static int print_and_error(const char* message, int ret) {
+    ui_reset_progress();
+    ui_set_background(BACKGROUND_ICON_ERROR);
+    if (message != NULL)
+        LOGE("%s", message); // Assumes message has line termination
+
+    return ret;
 }
 
 static int nandroid_backup_bitfield = 0;
@@ -448,15 +452,14 @@ else
 
 int nandroid_backup(const char* backup_path) {
     nandroid_backup_bitfield = 0;
-    ui_set_background(BACKGROUND_ICON_INSTALLING);
     refresh_default_backup_handler();
 
     if (ensure_path_mounted(backup_path) != 0) {
-if ( language== 1 )
-        return print_and_error("Can't mount backup path.\n");
-else
-        return print_and_error("无法挂载备份路径。\n");
 
+if ( language== 1 )
+        return print_and_error("Can't mount backup path.\n", NANDROID_ERROR_GENERAL);
+else
+        return print_and_error("无法挂载备份路径。\n", NANDROID_ERROR_GENERAL);
     }
 
     Volume* volume;
@@ -465,20 +468,23 @@ else
     else
         volume = volume_for_path(backup_path);
     if (NULL == volume)
+
 if ( language== 1 )
-        return print_and_error("Unable to find volume for backup path.\n");
+        return print_and_error("Unable to find volume for backup path.\n", NANDROID_ERROR_GENERAL);
 else
-        return print_and_error("无法找到备份路径所在卷。\n");
+        return print_and_error("无法找到备份路径所在卷。\n", NANDROID_ERROR_GENERAL);
+
 
     int ret;
     struct statfs sfs;
     struct stat s;
     if (NULL != volume) {
         if (0 != (ret = statfs(volume->mount_point, &sfs)))
+
 if ( language== 1 )
-            return print_and_error("Unable to stat backup path.\n");
+            return print_and_error("Unable to stat backup path.\n", ret);
 else
-            return print_and_error("无法统计备份路径。\n");
+            return print_and_error("无法统计备份路径。\n", ret);
 
         uint64_t bavail = sfs.f_bavail;
         uint64_t bsize = sfs.f_bsize;
@@ -498,12 +504,13 @@ else
     }
     char tmp[PATH_MAX];
     ensure_directory(backup_path);
+    ui_set_background(BACKGROUND_ICON_INSTALLING);
 
     if (0 != (ret = nandroid_backup_partition(backup_path, "/boot")))
-        return ret;
+        return print_and_error(NULL, ret);
 
     if (0 != (ret = nandroid_backup_partition(backup_path, "/recovery")))
-        return ret;
+        return print_and_error(NULL, ret);
 
     Volume *vol = volume_for_path("/wimax");
     if (vol != NULL && 0 == stat(vol->blk_device, &s)) {
@@ -518,25 +525,27 @@ else
         sprintf(tmp, "%s/wimax.%s.img", backup_path, serialno);
         ret = backup_raw_partition(vol->fs_type, vol->blk_device, tmp);
         if (0 != ret)
+
 if ( language== 1 )
-            return print_and_error("Error while dumping WiMAX image!\n");
+            return print_and_error("Error while dumping WiMAX image!\n", NANDROID_ERROR_GENERAL);
 else
-            return print_and_error("导出 WiMAX 镜像时出错！\n");
+            return print_and_error("导出 WiMAX 镜像时出错！\n", NANDROID_ERROR_GENERAL);
+
 
     }
 
     if (0 != (ret = nandroid_backup_partition(backup_path, "/system")))
-        return ret;
+        return print_and_error(NULL, ret);
 
     if (0 != (ret = nandroid_backup_partition(backup_path, "/preload")))
         return ret;
 
     if (0 != (ret = nandroid_backup_partition(backup_path, "/data")))
-        return ret;
+        return print_and_error(NULL, ret);
 
     if (has_datadata()) {
         if (0 != (ret = nandroid_backup_partition(backup_path, "/datadata")))
-            return ret;
+            return print_and_error(NULL, ret);
     }
 
     if (is_data_media() || 0 != stat(get_android_secure_path(), &s)) {
@@ -547,11 +556,11 @@ else
 
     } else {
         if (0 != (ret = nandroid_backup_partition_extended(backup_path, get_android_secure_path(), 0)))
-            return ret;
+            return print_and_error(NULL, ret);
     }
 
     if (0 != (ret = nandroid_backup_partition_extended(backup_path, "/cache", 0)))
-        return ret;
+        return print_and_error(NULL, ret);
 
     vol = volume_for_path("/sd-ext");
     if (vol == NULL || 0 != stat(vol->blk_device, &s)) {
@@ -568,7 +577,7 @@ else
             LOGI("无法挂载 sd-ext。此设备可能不支持对 sd-ext 进行备份，跳过对sd-ext的备份。\n");
 
         else if (0 != (ret = nandroid_backup_partition(backup_path, "/sd-ext")))
-            return ret;
+            return print_and_error(NULL, ret);
     }
 
 if ( language== 1 )
@@ -578,12 +587,12 @@ else
 
     sprintf(tmp, "nandroid-md5.sh %s", backup_path);
     if (0 != (ret = __system(tmp))) {
-if ( language== 1 )
-        ui_print("Error while generating md5 sum!\n");
-else
-        ui_print("生成 md5 校验值出错！\n");
 
-        return ret;
+if ( language== 1 )
+        ui_print("Error while generating md5 sum!\n", ret);
+else
+        ui_print("生成 md5 校验值出错！\n", ret);
+
     }
 
     sprintf(tmp, "cp /tmp/recovery.log %s/recovery.log", backup_path);
@@ -992,10 +1001,11 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_syst
     nandroid_files_total = 0;
 
     if (ensure_path_mounted(backup_path) != 0)
+
 if ( language== 1 )
-        return print_and_error("Can't mount backup path\n");
+        return print_and_error("Can't mount backup path\n", NANDROID_ERROR_GENERAL);
 else
-        return print_and_error("无法挂载备份路径\n");
+        return print_and_error("无法挂载备份路径\n", NANDROID_ERROR_GENERAL);
 
 
     char tmp[PATH_MAX];
@@ -1007,16 +1017,18 @@ else
 
     sprintf(tmp, "cd %s && md5sum -c nandroid.md5", backup_path);
     if (0 != __system(tmp))
+
 if ( language== 1 )
-        return print_and_error("MD5 mismatch!\n");
+        return print_and_error("MD5 mismatch!\n", NANDROID_ERROR_GENERAL);
 else
-        return print_and_error("MD5 校验值不匹配！\n");
+        return print_and_error("MD5 校验值不匹配！\n", NANDROID_ERROR_GENERAL);
+
 
 
     int ret;
 
     if (restore_boot && NULL != volume_for_path("/boot") && 0 != (ret = nandroid_restore_partition(backup_path, "/boot")))
-        return ret;
+        return print_and_error(NULL, ret);
 
     struct stat s;
     Volume *vol = volume_for_path("/wimax");
@@ -1043,45 +1055,46 @@ if ( language== 1 ) {
         } else {
 if ( language== 1 )
             ui_print("Erasing WiMAX before restore...\n");
+
 else
             ui_print("正在执行还原前对 WiMAX 分区的清空...\n");
 
             if (0 != (ret = format_volume("/wimax"))) {
 if ( language== 1 ) { 
-                return print_and_error("Error while formatting wimax!\n");
+                return print_and_error("Error while formatting wimax!\n", NANDROID_ERROR_GENERAL);
             ui_print("Restoring WiMAX image...\n");
 }else{
-                return print_and_error("格式化 wimax 分区出错！\n");
+                return print_and_error("格式化 wimax 分区出错！\n", NANDROID_ERROR_GENERAL);
             ui_print("正在还原 WiMAX 分区...\n");
 	}
 }
             if (0 != (ret = restore_raw_partition(vol->fs_type, vol->blk_device, tmp)))
-                return ret;
+                return print_and_error(NULL, ret);
         }
     }
 
     if (restore_system && 0 != (ret = nandroid_restore_partition(backup_path, "/system")))
-        return ret;
+        return print_and_error(NULL, ret);
 
     if (restore_preload && 0 != (ret = nandroid_restore_partition(backup_path, "/preload")))
         return ret;
 
     if (restore_data && 0 != (ret = nandroid_restore_partition(backup_path, "/data")))
-        return ret;
+        return print_and_error(NULL, ret);
 
     if (has_datadata()) {
         if (restore_data && 0 != (ret = nandroid_restore_partition(backup_path, "/datadata")))
-            return ret;
+            return print_and_error(NULL, ret);
     }
 
     if (restore_data && 0 != (ret = nandroid_restore_partition_extended(backup_path, get_android_secure_path(), 0)))
-        return ret;
+        return print_and_error(NULL, ret);
 
     if (restore_cache && 0 != (ret = nandroid_restore_partition_extended(backup_path, "/cache", 0)))
-        return ret;
+        return print_and_error(NULL, ret);
 
     if (restore_sdext && 0 != (ret = nandroid_restore_partition(backup_path, "/sd-ext")))
-        return ret;
+        return print_and_error(NULL, ret);
 
     sync();
     ui_set_background(BACKGROUND_ICON_NONE);
