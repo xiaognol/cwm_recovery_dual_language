@@ -949,7 +949,7 @@ else headers[0] = "select language";
         if (chosen_item == 1){
 	      language = 0;
 	    set_item_menu();
-    		ui_print("编译作者：ZJL@ATX团队\n");
+    		ui_print("编译作者：ZJL@ATX-C团队\n");
     		ui_print("编译时间："EXPAND(RECOVERY_BUILD_TIME)"\n");
 	    break;
 			}
