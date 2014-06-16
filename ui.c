@@ -200,7 +200,7 @@ static void draw_background_locked(int icon)
     }
 }
 
-void ui_increment_frame() {
+static void ui_increment_frame() {
     if (!ui_has_initialized) return;
     gInstallingFrame =
         (gInstallingFrame + 1) % ui_parameters.installing_frames;
@@ -420,7 +420,7 @@ static void *progress_thread(void *cookie)
         // update the progress bar animation, if active
         // update the spinning cube animation, even if no progress bar
         if (gProgressBarType == PROGRESSBAR_TYPE_INDETERMINATE ||
-                gProgressBarType == PROGRESSBAR_TYPE_NONE) {
+                gCurrentIcon == BACKGROUND_ICON_INSTALLING) {
             redraw = 1;
         }
 
@@ -435,8 +435,6 @@ static void *progress_thread(void *cookie)
                     gProgress = progress;
                     redraw = 1;
                 }
-            } else if (gCurrentIcon == BACKGROUND_ICON_INSTALLING) {
-                redraw = 1;
             }
         }
 
