@@ -1591,7 +1591,7 @@ else
 if ( language== 1 )
     sprintf(buf, "restore from %s", path);
 else
-    sprintf(buf, "从 %s 中选择备份文件进行还原", path);
+    sprintf(buf, "[普通]从 %s 中选择备份", path);
 
     menu[offset + 1] = strdup(buf);
 
@@ -1605,7 +1605,7 @@ else
 if ( language== 1 )
     sprintf(buf, "advanced restore from %s", path);
 else
-    sprintf(buf, "从 %s 中选择备份文件进行高级还原", path);
+    sprintf(buf, "[高级]从 %s 中选择备份", path);
 
     menu[offset + 3] = strdup(buf);
 }
