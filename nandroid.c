@@ -456,6 +456,7 @@ int nandroid_backup(const char* backup_path) {
 
     if (ensure_path_mounted(backup_path) != 0) {
 
+
 if ( language== 1 )
         return print_and_error("Can't mount backup path.\n", NANDROID_ERROR_GENERAL);
 else
@@ -480,6 +481,7 @@ else
     struct stat s;
     if (NULL != volume) {
         if (0 != (ret = statfs(volume->mount_point, &sfs)))
+
 
 if ( language== 1 )
             return print_and_error("Unable to stat backup path.\n", ret);
@@ -525,6 +527,7 @@ else
         sprintf(tmp, "%s/wimax.%s.img", backup_path, serialno);
         ret = backup_raw_partition(vol->fs_type, vol->blk_device, tmp);
         if (0 != ret)
+
 
 if ( language== 1 )
             return print_and_error("Error while dumping WiMAX image!\n", NANDROID_ERROR_GENERAL);
@@ -587,6 +590,7 @@ else
 
     sprintf(tmp, "nandroid-md5.sh %s", backup_path);
     if (0 != (ret = __system(tmp))) {
+
 
 if ( language== 1 )
         ui_print("Error while generating md5 sum!\n", ret);
@@ -1002,6 +1006,7 @@ int nandroid_restore(const char* backup_path, int restore_boot, int restore_syst
 
     if (ensure_path_mounted(backup_path) != 0)
 
+
 if ( language== 1 )
         return print_and_error("Can't mount backup path\n", NANDROID_ERROR_GENERAL);
 else
@@ -1017,6 +1022,7 @@ else
 
     sprintf(tmp, "cd %s && md5sum -c nandroid.md5", backup_path);
     if (0 != __system(tmp))
+
 
 if ( language== 1 )
         return print_and_error("MD5 mismatch!\n", NANDROID_ERROR_GENERAL);
@@ -1056,11 +1062,13 @@ if ( language== 1 ) {
 if ( language== 1 )
             ui_print("Erasing WiMAX before restore...\n");
 
+
 else
             ui_print("正在执行还原前对 WiMAX 分区的清空...\n");
 
             if (0 != (ret = format_volume("/wimax"))) {
 if ( language== 1 ) { 
+
                 return print_and_error("Error while formatting wimax!\n", NANDROID_ERROR_GENERAL);
             ui_print("Restoring WiMAX image...\n");
 }else{
