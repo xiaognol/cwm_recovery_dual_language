@@ -472,7 +472,7 @@ else
         copy_logs();
     }
 
-    ui_set_background(BACKGROUND_ICON_CLOCKWORK);
+    ui_set_background(BACKGROUND_ICON_ATX_ANZHI);
     ui_reset_progress();
     return result;
 }
