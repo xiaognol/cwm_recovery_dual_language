@@ -1074,9 +1074,9 @@ prompt_and_wait() {
 		chose_language_menu(); // first time to setup language profile
 
 		if ( language== 1 )
-		ui_print("语言配置文件初始化完成\n");
-		else
 		ui_print("language profile initialization completed \n");
+		else
+		ui_print("语言配置文件初始化完成\n");
 		}
 	
     /* check language profile from /cache/recovery/language --ZJL */
