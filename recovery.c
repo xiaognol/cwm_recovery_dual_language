@@ -76,6 +76,8 @@ static const char *TEMPORARY_LOG_FILE = "/tmp/recovery.log";
 static const char *TEMPORARY_INSTALL_FILE = "/tmp/last_install";
 static const char *SIDELOAD_TEMP_DIR = "/tmp/sideload";
 
+#define LANGUAGE "/cache/recovery/language"
+
 extern UIParameters ui_parameters;    // from ui.c
 language = 1;
 /*
@@ -950,17 +952,15 @@ else headers[0] = "select language";
         int chosen_item = get_menu_selection(headers, list, 0, 0);
         if (chosen_item == 1){
 	      language = 0;
-	    set_item_menu();
-    		ui_print("编译作者：ZJL@ATX-C团队\n");
-    		ui_print("编译时间："EXPAND(RECOVERY_BUILD_TIME)"\n");
+	    	set_item_menu();
+		write_language_file();
 	    break;
 			}
 	else// for english
 		{
 		  language = 1;
 	        set_item_menu();
-		ui_print("Author    : ZJL@AnZhi.com\n");
-    		ui_print("Build Time: "EXPAND(RECOVERY_BUILD_TIME)"\n");
+		write_language_file();
 		break;
 		}
     }
@@ -968,6 +968,25 @@ else headers[0] = "select language";
 
     ui_set_showing_back_button(old_val);
 }
+
+/* write language profile --ZJL */
+extern void write_language_file() {
+
+FILE *fp = fopen_path(LANGUAGE, "w");
+        if (fp == NULL) {
+if (language == 1) 
+            ui_print("No language profile,please setup %s\n", LANGUAGE);
+else
+            ui_print("无语言配置文件,请设置 %s\n", LANGUAGE);
+        } else {
+		 if (language == 1)
+            		fputs("EN", fp);
+		else
+			fputs("CN", fp);
+            check_and_fclose(fp, LANGUAGE);
+        }
+}
+/* write language profile --ZJL */
 
 extern void set_item_menu() {
 
@@ -983,7 +1002,9 @@ MENU_ITEMS[6] = "advanced";
 MENU_ITEMS[7] = "选择语言";
 MENU_ITEMS[8] = NULL;
 rootmenutitle[1] = "Only for "EXPAND(RECOVERY_PRODUCT_MODEL);
-ui_print("change language to english\n");
+ui_print("set language to english\n");
+ui_print("Author    : ZJL@AnZhi.com\n");
+ui_print("Build Time: "EXPAND(RECOVERY_BUILD_TIME)"\n");
 } else {
 MENU_ITEMS[0] = "立即重启系统";
 MENU_ITEMS[1] = "刷入刷机包";
@@ -996,6 +1017,8 @@ MENU_ITEMS[7] = "select language";
 MENU_ITEMS[8] = NULL;
 rootmenutitle[1] = EXPAND(RECOVERY_PRODUCT_MODEL)" 专用版";
 ui_print("启用中文。\n");
+ui_print("编译作者：ZJL@ATX-C团队\n");
+ui_print("编译时间："EXPAND(RECOVERY_BUILD_TIME)"\n");
 	}
 }
 
@@ -1013,7 +1036,51 @@ int ui_menu_level = 1;
 int ui_root_menu = 0;
 static void
 prompt_and_wait() {
-	chose_language_menu();
+	
+	/* check language profile from /cache/recovery/language --ZJL */
+  if (!access(LANGUAGE, 0)) {
+
+	FILE *fp = fopen_path(LANGUAGE, "r");
+	    
+        if (fp != NULL) {
+            
+	    char *token;
+	    //char *language_switch;
+            char buf[4096];
+	    char *cn = "CN";
+	    char *en = "EN";
+	    fgets(buf, sizeof(buf), fp);
+            token = strtok(buf, "\0");
+
+
+	    if (token != NULL && !strcmp(token, en)) {
+		language = 1 ;	// English
+		set_item_menu();	
+		} else if (token != NULL && !strcmp(token, cn)) {
+		language = 0 ;	// Chinese
+		set_item_menu();	
+		} else {
+		language = 1 ;  // English default
+		set_item_menu();
+			}
+	    check_and_fclose(fp, LANGUAGE);
+	    
+         } else {
+
+		chose_language_menu();
+
+		}
+   } else {
+		chose_language_menu(); // first time to setup language profile
+
+		if ( language== 1 )
+		ui_print("语言配置文件初始化完成\n");
+		else
+		ui_print("language profile initialization completed \n");
+		}
+	
+    /* check language profile from /cache/recovery/language --ZJL */
+
     //const char** headers = prepend_title((const char**)MENU_HEADERS);
 
 if ( language== 0 ) {
