@@ -434,7 +434,6 @@ erase_volume(const char *volume) {
                 }
             }
             closedir(d);
-	copy_log_file(LANGUAGE, "/tmp/LANGUAGE", true);
 } else {
             if (errno != ENOENT) {
                 printf("opendir failed: %s\n", strerror(errno));
@@ -472,7 +471,7 @@ else
         // log.
         tmplog_offset = 0;
         copy_logs();
-	copy_log_file("/tmp/LANGUAGE", LANGUAGE , true);
+	write_language_file();
     }
 
     ui_set_background(BACKGROUND_ICON_ATX_ANZHI);
