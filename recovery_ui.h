@@ -127,15 +127,12 @@ extern char* rootmenutitle[];
 // Loosely track the depth of the current menu
 extern int ui_root_menu;
 
-int
-get_menu_selection(const char** headers, char** items, int menu_only, int initial_selection);
+int get_menu_selection(const char** headers, char** items, int menu_only, int initial_selection);
 
-void
-set_sdcard_update_bootloader_message();
+void set_sdcard_update_bootloader_message();
 
 extern int ui_handle_key(int key, int visible);
 
-// call a clean reboot
 void reboot_main_system(int cmd, int flags, char *arg);
 
 extern void set_item_menu();

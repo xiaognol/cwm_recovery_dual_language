@@ -16,12 +16,10 @@
 
 #include <linux/input.h>
 
-#include "recovery_ui.h"
 #include "common.h"
 #include "extendedcommands.h"
-#include "cutils/properties.h"
-//char language[];
-//int ret = property_get("sys.language.chinese", language, NULL);
+#include "recovery_ui.h"
+
 char* MENU_HEADERS[] = { NULL };
 /*extern void set_item_menu() {
 

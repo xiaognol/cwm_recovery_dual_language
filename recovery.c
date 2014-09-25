@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
  * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
+ * Copyright (C) 2014 The MoKee OpenSource Project
+ * Copyright (C) 2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +18,7 @@
  */
 
 #include <ctype.h>
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -28,8 +31,6 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
-#include <dirent.h>
-#include <sys/stat.h>
 
 #include "bootloader.h"
 #include "common.h"
@@ -40,17 +41,15 @@
 #include "minzip/DirUtil.h"
 #include "roots.h"
 #include "recovery_ui.h"
-
 #include "adb_install.h"
 #include "minadbd/adb.h"
 
+#include "dedupe/dedupe.h"
 #include "firmware.h"
 #include "extendedcommands.h"
 #include "flashutils/flashutils.h"
-#include "dedupe/dedupe.h"
-#include "voldclient/voldclient.h"
-
 #include "recovery_cmds.h"
+#include "voldclient/voldclient.h"
 
 struct selabel_handle *sehandle = NULL;
 
@@ -62,6 +61,7 @@ static const struct option OPTIONS[] = {
   { "wipe_cache", no_argument, NULL, 'c' },
   { "show_text", no_argument, NULL, 't' },
   { "sideload", no_argument, NULL, 'l' },
+  { "shutdown_after", no_argument, NULL, 'p' },
   { NULL, 0, NULL, 0 },
 };
 
@@ -1374,12 +1374,12 @@ else
     rotate_last_logs(10);
     get_args(&argc, &argv);
 
-    int previous_runs = 0;
     const char *send_intent = NULL;
     const char *update_package = NULL;
     int wipe_data = 0, wipe_cache = 0;
     int sideload = 0;
     int headless = 0;
+    int shutdown_after = 0;
 
 if ( language== 1 )
     LOGI("Checking arguments.\n");
@@ -1389,7 +1389,6 @@ else
     int arg;
     while ((arg = getopt_long(argc, argv, "", OPTIONS, NULL)) != -1) {
         switch (arg) {
-        case 'p': previous_runs = atoi(optarg); break;
         case 's': send_intent = optarg; break;
         case 'u': update_package = optarg; break;
         case 'w':
@@ -1405,6 +1404,7 @@ else
         case 'c': wipe_cache = 1; break;
         case 't': ui_show_text(1); break;
         case 'l': sideload = 1; break;
+        case 'p': shutdown_after = 1; break;
         case '?':
 if ( language== 1 )
             LOGE("Invalid command argument\n");
@@ -1561,13 +1561,19 @@ else
 
     // Otherwise, get ready to boot the main system...
     finish_recovery(send_intent);
-if ( language== 1 )
-    ui_print("Rebooting...\n");
-else
-    ui_print("重启中...\n");
-
-    reboot_main_system(ANDROID_RB_RESTART, 0, 0);
-
+    if (shutdown_after) {
+		if ( language== 1 )
+			ui_print("Shutting down...\n");
+		else
+			ui_print("关机中...\n");
+        reboot_main_system(ANDROID_RB_POWEROFF, 0, 0);
+    } else {
+		if ( language== 1 )
+			ui_print("Rebooting...\n");
+		else
+			ui_print("重启中...\n");
+        reboot_main_system(ANDROID_RB_RESTART, 0, 0);
+    }
     return EXIT_SUCCESS;
 }
 

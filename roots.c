@@ -22,21 +22,23 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#include <fs_mgr.h>
 #include "mtdutils/mtdutils.h"
 #include "mounts.h"
 #include "roots.h"
 #include "common.h"
 #include "make_ext4fs.h"
 
-#include <fs_mgr.h>
 #include <libgen.h>
-#include "flashutils/flashutils.h"
-#include "extendedcommands.h"
-#include "recovery_ui.h"
 
+#include "extendedcommands.h"
+#include "flashutils/flashutils.h"
+#include "recovery_ui.h"
 #include "voldclient/voldclient.h"
 
 static struct fstab *fstab = NULL;
+
+extern struct selabel_handle *sehandle;
 
 int get_num_volumes() {
     return fstab->num_entries;
@@ -389,8 +391,6 @@ else
     return unmount_mounted_volume(mv);
 }
 
-extern struct selabel_handle *sehandle;
-
 int format_volume(const char* volume) {
 #ifdef BOARD_NATIVE_DUALBOOT_SINGLEDATA
     if(device_truedualboot_format_volume(volume) <= 0)
@@ -440,7 +440,13 @@ else
             LOGE("format_volume 卸载 \"%s\" 时出错\n", v->mount_point);
 
         }
-        return vold_format_volume(v->mount_point, 1) == CommandOkay ? 0 : -1;
+        if (strcmp(v->fs_type, "auto") == 0) {
+            // Format with current filesystem
+            return vold_format_volume(v->mount_point, 1) == CommandOkay ? 0 : -1;
+        } else {
+            // Format filesystem defined in fstab
+            return vold_custom_format_volume(v->mount_point, v->fs_type, 1) == CommandOkay ? 0 : -1;
+        }
     }
 
     if (strcmp(v->fs_type, "ramdisk") == 0) {
