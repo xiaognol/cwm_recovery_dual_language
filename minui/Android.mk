@@ -22,6 +22,10 @@ LOCAL_C_INCLUDES +=\
 #endif
 
 
+ifeq ($(TARGET_USES_QCOM_BSP), true)
+    LOCAL_CFLAGS += -DMSM_BSP
+endif
+
 LOCAL_MODULE := libminui
 
 # This used to compare against values in double-quotes (which are just
