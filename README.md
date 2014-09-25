@@ -1,4 +1,4 @@
-   cwm_bootable_recovery_双语切换版 6.0.4.9
+   cwm_bootable_recovery_双语切换版 6.0.5.1
 ==============================
 适配：ZJL@安智ATX团队 测试机型：C8813Q
 感谢：ATX龙腾-大星星 的6047汉化代码
