@@ -1,7 +1,10 @@
    cwm_bootable_recovery_双语切换版 6.0.5.1
 ==============================
-适配：ZJL@安智ATX团队 测试机型：C8813Q
+适配：ZJL@安智ATX团队 / dianlujitao@安智ATX破晓 
+
+测试机型：C8813Q,C8816
 感谢：ATX龙腾-大星星 的6047汉化代码
+
 
 编译配置：
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"fontcn28_15x40.h\"
@@ -11,8 +14,9 @@ BOARD_USE_CUSTOM_RECOVERY_FONT := \"fontcn28_15x40.h\"
 进度：%100 已完成
 
 细节修补中。。
-
+dianlujitao@安智ATX破晓
 ZJL@安智ATX-C团队，安智ATX新月
+
 
 
 
