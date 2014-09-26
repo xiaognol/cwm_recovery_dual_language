@@ -10,6 +10,7 @@ else
   else
     LOCAL_SRC_FILES += graphics.c
   endif
+  LOCAL_SRC_FILES += graphics_overlay.c
 endif
 
 LOCAL_C_INCLUDES +=\
