@@ -240,7 +240,7 @@ else
     }
 #endif
 
-    ui_set_background(BACKGROUND_ICON_CLOCKWORK);
+    ui_set_background(BACKGROUND_ICON_ATX_ANZHI);
 if ( language== 1 )
     ui_print("\nInstall from sdcard complete.\n");
 else
@@ -606,7 +606,6 @@ else
 	}
 
     free(file);
-	}
 }
 
 static void show_nandroid_delete_menu(const char* path) {

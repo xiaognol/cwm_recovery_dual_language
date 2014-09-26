@@ -610,7 +610,7 @@ else
     __system(tmp);
 
     sync();
-    ui_set_background(BACKGROUND_ICON_CLOCKWORK);
+    ui_set_background(BACKGROUND_ICON_ATX_ANZHI);
     ui_reset_progress();
 if ( language== 1 )
     ui_print("\nBackup complete!\n");
@@ -1085,7 +1085,7 @@ if ( language== 1 ) {
         return print_and_error(NULL, ret);
 
     sync();
-    ui_set_background(BACKGROUND_ICON_CLOCKWORK);
+    ui_set_background(BACKGROUND_ICON_ATX_ANZHI);
     ui_reset_progress();
 if ( language== 1 )
     ui_print("\nRestore complete!\n");
