@@ -32,8 +32,10 @@ int device_handle_key(int key_code, int visible) {
             case KEY_SEND:
             case KEY_HOMEPAGE:
             case KEY_SEARCH:
+		{
+		vibrate(30);
                 return SELECT_ITEM;
-            
+            	}
             case KEY_END:
             case KEY_BACKSPACE:
             case KEY_BACK:
