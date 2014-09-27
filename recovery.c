@@ -1002,6 +1002,13 @@ MENU_ITEMS[6] = "advanced";
 MENU_ITEMS[7] = "选择语言";
 MENU_ITEMS[8] = NULL;
 rootmenutitle[1] = "Only for "EXPAND(RECOVERY_PRODUCT_MODEL);
+#ifdef BOARD_RECOVERY_SWIPE
+#ifndef BOARD_TOUCH_RECOVERY
+    ui_print("Swipe up/down to change selections.\n");
+    ui_print("Swipe to the right for enter.\n");
+    ui_print("Swipe to the left for back.\n");
+#endif
+#endif
 ui_print("set language to english\n");
 ui_print("Author    : ZJL@AnZhi.com\n");
 ui_print("Build Time: "EXPAND(RECOVERY_BUILD_TIME)"\n");
@@ -1016,6 +1023,14 @@ MENU_ITEMS[6] = "高级功能";
 MENU_ITEMS[7] = "select language";
 MENU_ITEMS[8] = NULL;
 rootmenutitle[1] = EXPAND(RECOVERY_PRODUCT_MODEL)" 专用版";
+#ifdef BOARD_RECOVERY_SWIPE
+#ifndef BOARD_TOUCH_RECOVERY
+    //display directions for swipe controls
+    ui_print("上下滑动更改选择。\n");
+    ui_print("右滑为确认选择。\n");
+    ui_print("左滑为返回。\n");
+#endif
+#endif
 ui_print("启用中文。\n");
 ui_print("编译作者：ZJL@ATX-C团队\n");
 ui_print("编译时间："EXPAND(RECOVERY_BUILD_TIME)"\n");
@@ -1344,22 +1359,6 @@ else
     device_ui_init(&ui_parameters);
     ui_init();
     //ui_print(EXPAND(RECOVERY_VERSION)"\n");
-
-
-#ifdef BOARD_RECOVERY_SWIPE
-#ifndef BOARD_TOUCH_RECOVERY
-    //display directions for swipe controls
-if ( language== 1 ) {
-    ui_print("Swipe up/down to change selections.\n");
-    ui_print("Swipe to the right for enter.\n");
-    ui_print("Swipe to the left for back.\n");
-} else {
-    ui_print("上下滑动更改选择。\n");
-    ui_print("右滑为确认选择。\n");
-    ui_print("左滑为返回。\n");
-}
-#endif
-#endif
 
     load_volume_table();
     process_volumes();
