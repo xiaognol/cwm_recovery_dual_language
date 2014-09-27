@@ -1580,3 +1580,23 @@ void set_perf_mode(int on) {
     property_set("recovery.perf.mode", on ? "1" : "0");
 }
 
+int vibrate(int timeout_ms) {
+  char str[20];
+  int fd;
+  int ret;
+  fd = open("/sys/class/timed_output/vibrator/enable", O_WRONLY);
+  
+  if (fd < 0) {
+    return -1;
+  }
+  
+  ret = snprintf(str, sizeof(str), "%d", timeout_ms);
+  ret = write(fd, str, ret);
+  close(fd);
+  
+  if (ret < 0) {
+    return -1;
+  }
+  
+  return 0;
+}

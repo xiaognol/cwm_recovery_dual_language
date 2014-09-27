@@ -11,14 +11,18 @@ int device_handle_key(int key_code, int visible) {
             case KEY_DOWN:
             case KEY_VOLUMEDOWN:
             case KEY_MENU:
+		{
+		vibrate(30);
                 return HIGHLIGHT_DOWN;
-
+		}
             case KEY_LEFTSHIFT:
             case KEY_UP:
             case KEY_VOLUMEUP:
             case KEY_HOME:
+		{
+		vibrate(30);
                 return HIGHLIGHT_UP;
-
+		}
             case KEY_POWER:
             case KEY_LEFTBRACE:
             case KEY_ENTER:
@@ -34,6 +38,7 @@ int device_handle_key(int key_code, int visible) {
             case KEY_BACKSPACE:
             case KEY_BACK:
                 if (!ui_root_menu) {
+		    vibrate(30);
                     return GO_BACK;
                 }
         }

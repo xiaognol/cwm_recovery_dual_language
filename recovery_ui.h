@@ -136,4 +136,5 @@ extern int ui_handle_key(int key, int visible);
 void reboot_main_system(int cmd, int flags, char *arg);
 
 extern void set_item_menu();
+int vibrate_device(int timeout_ms);
 #endif
