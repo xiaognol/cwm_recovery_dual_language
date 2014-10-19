@@ -17,10 +17,10 @@ LOCAL_C_INCLUDES +=\
     external/libpng\
     external/zlib
 
-#ifeq ($(call is-vendor-board-platform,QCOM),true)
-#  LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
-#  LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-#endif
+ifeq ($(call is-vendor-board-platform,QCOM),true)
+  LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+  LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+endif
 
 
 ifneq ($(TARGET_BOARD_PLATFORM),msm7x27a)
